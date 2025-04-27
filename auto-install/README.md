@@ -20,7 +20,7 @@ sudo apt install proxmox-auto-install-assistant -y
 ```
 
 3. Customise your answer.toml file
-[answers.toml](https://github.com/tekore/HomeOps/auto-install/answers.toml)
+[answers.toml](https://github.com/tekore/HomeOps/tree/main/auto-install/answers.toml)
 
 4. Validate your answer.toml file
 ```sh
