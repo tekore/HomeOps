@@ -1,0 +1,20 @@
+[global]
+keyboard = "en-gb"
+country = "gb"
+fqdn = "axis.local"
+mailto = "tekore@notarealemail.com"
+timezone = "Europe/London"
+root-password = "Changeme123"
+root-ssh-keys = ["ssh-ed25519 AAPPC3NzaCDDCWZDI1NTE5AAAAIG..."]
+
+[network]
+source = "from-answer"
+cidr = "192.168.1.100/24"
+dns = "8.8.8.8"
+gateway = "192.168.1.1"
+filter.INTERFACE = "eno1"
+
+[disk-setup]
+filesystem = "zfs"
+zfs.raid = "raid1"
+filter.DEVNAME = "/dev/sd*"
