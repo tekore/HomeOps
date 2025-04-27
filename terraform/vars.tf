@@ -1,11 +1,11 @@
-variable "PROXMOX_ADDRESS" {
-   description = "SSH Address for Proxmox Node"
-   type        = string
-   sensitive   = true
-}
-
-variable "PROXMOX_SSH_PORT" {
-   description = "SSH port for Proxmox Node"
-   type        = string
-   sensitive   = true
+//vms.tf
+variable "access" {
+  type = map(string)
+  default = {
+   endpoint = ""
+    address = ""
+    port = ""
+    username = ""
+    password = ""
+  }
 }

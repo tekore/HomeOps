@@ -8,12 +8,15 @@ terraform {
 }
 
 provider "proxmox" {
+  endpoint = var.access.endpoint
+  username = var.access.username
+  password = var.access.password
   insecure = true
   ssh {
     node {
       name    = "axis"
-      address = var.PROXMOX_ADDRESS
-      port = var.PROXMOX_SSH_PORT
+      address = var.access.address
+      port = var.access.port      
     }
     agent = true
   }
