@@ -1,14 +1,15 @@
-resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_qcow2_img" {
+// Ubuntu img download
+resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qcow2_img" {
   content_type = "iso"
   datastore_id = "local"
   node_name    = "axis"
-  url          = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+  url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
 resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   name        = "ubuntu-test-vm"
   description = "Managed by Terraform"
-  tags        = ["terraform", "ubuntu"]
+  tags        = ["Terraform", "Ubuntu"]
 
   node_name = "axis"
   vm_id     = 4321
@@ -38,7 +39,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 
   disk {
     datastore_id = "local-zfs"
-    file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+    file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
     interface    = "scsi0"
   }
 
