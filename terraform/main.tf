@@ -21,3 +21,7 @@ provider "proxmox" {
     agent = true
   }
 }
+
+data "proxmox_virtual_environment_node" "node" {
+  node_name = "axis"
+}

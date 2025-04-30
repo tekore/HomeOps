@@ -2,7 +2,7 @@
 resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qcow2_img" {
   content_type = "iso"
   datastore_id = "local"
-  node_name    = "axis"
+  node_name    = data.proxmox_virtual_environment_node.node.node_name
   url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
@@ -11,7 +11,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   description = "Managed by Terraform"
   tags        = ["Terraform", "Ubuntu"]
 
-  node_name = "axis"
+  node_name = data.proxmox_virtual_environment_node.node.node_name
   vm_id     = 4321
 
   agent {
@@ -57,7 +57,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     }
 
   }
-
   network_device {
     bridge = "vmbr0"
   }
@@ -66,5 +65,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     type = "l26"
   }
 
-  serial_device {}
+  serial_device {
+
+  }
 }
