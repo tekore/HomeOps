@@ -1,1 +1,0 @@
-- Create a playbook that a proxmox host can call to set up the github runner container
