@@ -141,10 +141,3 @@
           RUNNER_LABELS: "{{ runner_labels | default('self-hosted,linux,x64') }}"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
-        - role: github-runner
-          vars:
-            # Override default variables as needed
-            container_id: 100
-            github_owner: "YOUR_GITHUB_USERNAME_OR_ORG"
-            github_repo: "YOUR_REPOSITORY"
-            github_token: "YOUR_GITHUB_TOKEN"
