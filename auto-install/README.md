@@ -6,7 +6,7 @@
 
 ## Prerequisites
 - You have a USB of atleast 8GB in size
-- A Linux host you can plug the formentioned USB into (Commands may vary slightly if not Ubuntu 24.04)
+- A Linux host you can use to create the USB (Commands may vary slightly if not Ubuntu 24.04)
 
 ## How-To
 1. Add the repo for the 'proxmox-auto-install-assistant' tool (if applicable)
@@ -19,20 +19,23 @@ echo "deb [arch=amd64] http://download.proxmox.com/debian/pve bookworm pve-no-su
 sudo apt install proxmox-auto-install-assistant -y 
 ```
 
-3. Customise your answer.toml file
+3. Customise the answer.toml file
 [answer.toml](https://github.com/tekore/HomeOps/blob/main/auto-install/answer.toml)
 
-4. Validate your answer.toml file
+4. Customise the first-boot-script.sh file
+[first-boot-script.sh](https://github.com/tekore/HomeOps/blob/main/auto-install/first-boot-script.sh)
+
+5. Validate your answer.toml file
 ```sh
 proxmox-auto-install-assistant validate-answer answer.toml
 ```
 
-5. Download the Proxmox-VE ISO
+6. Download the Proxmox-VE ISO
 [Proxmox_Download](https://www.proxmox.com/en/downloads)
 
-6. Build your custom ISO
+7. Build your custom ISO
 ```sh
-proxmox-auto-install-assistant prepare-iso ./proxmox-ve*.iso --fetch-from iso --answer-file ./answer.toml
+proxmox-auto-install-assistant prepare-iso ./proxmox-ve*.iso --fetch-from iso --answer-file ./answer.toml --on-first-boot ./first-boot-script.sh
 ```
 
-7. Now burn the newly created ISO image to a USB (using a tool such as 'balenaEtcher') and boot from it.
+8. Now burn the newly created ISO image to a USB (using a tool such as 'balenaEtcher') and boot from it.

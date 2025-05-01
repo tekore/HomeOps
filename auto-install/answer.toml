@@ -18,3 +18,8 @@ filter.INTERFACE = "eno1"
 filesystem = "zfs"
 zfs.raid = "raid1"
 filter.DEVNAME = "/dev/sd*"
+
+[first-boot]
+source = "from-url"
+ordering = "fully-up"
+url = "https://raw.githubusercontent.com/tekore/HomeOps/refs/heads/main/auto-install/first-boot-script.sh"
