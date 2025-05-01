@@ -22,4 +22,4 @@ filter.DEVNAME = "/dev/sd*"
 [first-boot]
 source = "from-url"
 ordering = "fully-up"
-url = "https://raw.githubusercontent.com/tekore/HomeOps/refs/heads/main/auto-install/first-boot-script.sh"
+url = "https://raw.githubusercontent.com/tekore/HomeOps/refs/heads/main/Auto-Install/first-boot-script.sh"
