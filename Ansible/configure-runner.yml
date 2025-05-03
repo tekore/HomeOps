@@ -1,143 +1,72 @@
 ---
-# playbook.yml - Main playbook for GitHub runner setup on Proxmox
-- name: Setup GitHub Actions runner on Proxmox
-  hosts: localhost
-  connection: local
-  gather_facts: yes
+
+- name: Configure GitHub runner
+  hosts: local
   become: yes
   vars:
-    proxmox_node: "pve"                  # Proxmox node name
-    proxmox_api_user: "root@pam"         # API user
-    proxmox_validate_certs: false        # Validate API certificates
-    # Container Settings
-    container_id: 100                    # Container ID
-    container_hostname: "github-runner"  # Container hostname
-    lxc_template: "ubuntu-22.04-standard_22.04-1_amd64.tar.zst"  # LXC template
-    container_cores: 2                   # CPU cores
-    container_memory: 2048               # Memory in MB
-    container_swap: 512                  # Swap in MB
-    container_storage: "local-lvm"       # Storage location
-    container_disk: "8"                  # Disk size in GB
-    container_network:                   # Network settings
-      net0: "name=eth0,bridge=vmbr0,ip=dhcp"
-    # GitHub Runner Settings
-    github_owner: "YOUR_GITHUB_USERNAME_OR_ORG"  # GitHub username or org
-    github_repo: "YOUR_REPOSITORY"               # GitHub repository name
-    github_token: "YOUR_GITHUB_TOKEN"            # GitHub runner token
-    runner_name: "proxmox-runner"                # Name of the runner
-    runner_labels: "self-hosted,linux,x64"       # Runner labels
-
+    github_repo_url: ""
+    github_runner_name: ""
+    github_token: ""
   tasks:
-    - name: Ensure LXC template exists for container
-      ansible.builtin.stat:
-        path: "/var/lib/vz/template/cache/{{ lxc_template }}"
-      register: template_exists
-
-    - name: Download LXC template if not exists
-      ansible.builtin.command:
-        cmd: "pveam download local {{ lxc_template }}"
-      when: not template_exists.stat.exists
-
-    - name: Create Proxmox GitHub runner container
-      community.general.proxmox:
-        api_host: "localhost"
-        api_user: "{{ proxmox_api_user | default('root@pam') }}"
-        api_token_name: "{{ proxmox_api_token_name | default(omit) }}"
-        api_token_value: "{{ proxmox_api_token_value | default(omit) }}"
-        password: "{{ proxmox_password | default(omit) }}"
-        validate_certs: "{{ proxmox_validate_certs | default(false) }}"
-        node: "{{ proxmox_node | default(lookup('ansible.builtin.env', 'HOSTNAME')) }}"
-        vmid: "{{ container_id }}"
-        hostname: "{{ container_hostname }}"
-        ostemplate: "local:vztmpl/{{ lxc_template }}"
-        cores: "{{ container_cores | default(2) }}"
-        memory: "{{ container_memory | default(2048) }}"
-        swap: "{{ container_swap | default(512) }}"
-        storage: "{{ container_storage | default('local-lvm') }}"
-        disk: "{{ container_disk | default('8') }}"
-        netif: "{{ container_network | default({'net0': 'name=eth0,bridge=vmbr0,ip=dhcp'}) }}"
-        features:
-          - nesting=1
+  #### Add runner user
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
         state: present
-        onboot: yes
-        unprivileged: yes
-        description: "GitHub Actions Runner Container"
-
-    - name: Start container
-      community.general.proxmox:
-        api_host: "localhost"
-        api_user: "{{ proxmox_api_user | default('root@pam') }}"
-        api_token_name: "{{ proxmox_api_token_name | default(omit) }}"
-        api_token_value: "{{ proxmox_api_token_value | default(omit) }}"
-        password: "{{ proxmox_password | default(omit) }}"
-        validate_certs: "{{ proxmox_validate_certs | default(false) }}"
-        node: "{{ proxmox_node | default(lookup('ansible.builtin.env', 'HOSTNAME')) }}"
-        vmid: "{{ container_id }}"
-        state: started
-
-    - name: Wait for container to be ready
-      ansible.builtin.wait_for:
-        host: "{{ container_ip | default(container_hostname) }}"
-        port: 22
-        delay: 5
-        timeout: 300
-      register: wait_for_container
-      ignore_errors: yes
-
-    - name: Install Docker in container
-      delegate_to: "{{ container_ip | default(container_hostname) }}"
-      become: yes
-      block:
-        - name: Install required packages
-          ansible.builtin.apt:
-            name:
-              - apt-transport-https
-              - ca-certificates
-              - curl
-              - gnupg
-              - lsb-release
-            update_cache: yes
-            state: present
-
-        - name: Add Docker GPG key
-          ansible.builtin.apt_key:
-            url: https://download.docker.com/linux/ubuntu/gpg
-            state: present
-
-        - name: Add Docker repository
-          ansible.builtin.apt_repository:
-            repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-            state: present
-            update_cache: yes
-
-        - name: Install Docker
-          ansible.builtin.apt:
-            name:
-              - docker-ce
-              - docker-ce-cli
-              - containerd.io
-            state: present
-            update_cache: yes
-
-        - name: Ensure Docker service is running
-          ansible.builtin.service:
-            name: docker
-            state: started
-            enabled: yes
-
-    - name: Run GitHub runner container
-      delegate_to: "{{ container_ip | default(container_hostname) }}"
-      become: yes
-      community.docker.docker_container:
+        update_cache: yes
+    
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+    
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+    
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+    
+    - name: Create GitHub runner directory
+      file:
+        path: /home/{{ ansible_user }}/actions-runner
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+    
+    - name: Run GitHub runner docker container
+      docker_container:
         name: github-runner
         image: ghcr.io/actions/actions-runner:latest
-        state: started
         restart_policy: always
-        env:
-          RUNNER_NAME: "{{ runner_name | default('proxmox-runner') }}"
-          RUNNER_REPOSITORY_URL: "https://github.com/{{ github_owner }}/{{ github_repo }}"
-          RUNNER_TOKEN: "{{ github_token }}"
-          RUNNER_WORK_DIRECTORY: "_work"
-          RUNNER_LABELS: "{{ runner_labels | default('self-hosted,linux,x64') }}"
         volumes:
+          - /home/{{ ansible_user }}/actions-runner:/home/runner/work
           - /var/run/docker.sock:/var/run/docker.sock
+        env:
+          RUNNER_NAME: "{{ github_runner_name }}"
+          REPO_URL: "{{ github_repo_url }}"
+          RUNNER_TOKEN: "{{ github_token }}"
+      become: true
+      
+    - name: Show completed message
+      debug:
+        msg: |
+          GitHub runner setup completed successfully!
+          - VM ID: {{ hostvars['localhost']['vm_id'] }}
+          - VM IP: {{ ansible_host }}
+          - GitHub Runner Name: {{ github_runner_name }}
