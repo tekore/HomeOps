@@ -41,7 +41,7 @@ proxmox-auto-install-assistant prepare-iso ./proxmox-ve*.iso --fetch-from iso --
 8. Now burn the newly created ISO image to a USB (using a tool such as 'balenaEtcher')
 [balenaEtcher_Download](https://etcher.balena.io/#download-etcher)
 
-## (If you don't want to GitHub runner installed you can stop at this stage and just boot from the aforementioned USB)
+### (If you don't want to install a GitHub Actions runner you can stop at this stage, just boot from the aforementioned USB)
 9. Customise the runner_secrets.yml and copy it onto the second USB
 [runner_secrets_example.yml](https://github.com/tekore/HomeOps/blob/main/Auto-Install/runner_secrets_example.yml)
 
