@@ -70,10 +70,3 @@
           -e RUNNER_TOKEN="{{ github_token }}" \
           ghcr.io/actions/actions-runner:latest
       become: true
-      
-    - name: Show completed message
-      debug:
-        msg: |
-          GitHub runner setup completed!
-          - VM IP: {{ ansible_host }}
-          - GitHub Runner Name: {{ github_runner_name }}
