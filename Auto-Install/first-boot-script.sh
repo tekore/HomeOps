@@ -75,7 +75,7 @@ runcmd:
   - ansible-pull -U $ANSIBLE_REPO_URL -i localhost --purge $ANSIBLE_REPO_PLAYBOOK --extra-vars "@/tmp/runner_secrets.yml"
 EOF
 
-# === Print cloud-init file for debugging ==
+# === Print cloud-init file for debugging purposes ===
 echo "=== Cloud-init Configuration ==="
 cat /var/lib/vz/snippets/cloudinit.yml
 echo "==============================="
@@ -84,8 +84,8 @@ echo "==============================="
 wget -O ubuntu_cloud.img "$CLOUD_IMAGE_URL"
 echo "✅ Downloaded ubuntu Cloud Image"
 
-# === CREATE VM ===
-qm create $VM_ID --name $VM_NAME --memory 2048 --net0 virtio,bridge=$BRIDGE
+# === Create the virtual machine ===
+qm create $VM_ID --name $VM_NAME --memory 4096 --net0 virtio,bridge=$BRIDGE
 
 # === Import the disk ===
 qm importdisk $VM_ID ubuntu_cloud.img $STORAGE
@@ -104,11 +104,6 @@ pvesm set local --content $CURRENT_CONTENT,snippets
 # === Apply cloud-init settings ===
 qm set $VM_ID --cicustom "user=local:snippets/cloudinit.yml"
 
-# Optional: If you also want to add SSH key
-if [[ -f "$SSH_KEY_PATH" ]]; then
-  qm set $VM_ID --sshkey "$SSH_KEY_PATH"
-fi
-
-# === START VM ===
+# === Start the virtual machine ===
 qm start $VM_ID
 echo "✅ VM $VM_ID ($VM_NAME) created and started with Ansible pull."
