@@ -103,6 +103,7 @@ pvesm set local --content $CURRENT_CONTENT,snippets
 
 # === Apply cloud-init settings ===
 qm set $VM_ID --cicustom "user=local:snippets/cloudinit.yml"
+qm set $VM_ID --ipconfig0 ip=dhcp
 
 # === Start the virtual machine ===
 qm start $VM_ID
