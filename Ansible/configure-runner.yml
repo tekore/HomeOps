@@ -1,14 +1,23 @@
 ---
 
 - name: Configure GitHub runner
-  hosts: local
-  become: yes
+  connection: local
+  become: true
+  become_user: root
+  hosts: localhost
   vars:
     github_repo_url: ""
     github_runner_name: ""
     github_token: ""
   tasks:
-  #### Add runner user
+    - name: Add the runner user if not already created
+      ansible.builtin.user:
+        name: runner
+        shell: /bin/bash
+        groups: runner
+        append: yes
+        create_home: true
+
     - name: Install Docker dependencies
       apt:
         name:
@@ -37,16 +46,16 @@
     
     - name: Add user to docker group
       user:
-        name: "{{ ansible_user }}"
+        name: "runner"
         groups: docker
         append: yes
     
     - name: Create GitHub runner directory
       file:
-        path: /home/{{ ansible_user }}/actions-runner
+        path: /home/runner/actions-runner
         state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "runner"
+        group: "runner"
         mode: '0755'
     
     - name: Run GitHub runner docker container
@@ -55,7 +64,7 @@
         image: ghcr.io/actions/actions-runner:latest
         restart_policy: always
         volumes:
-          - /home/{{ ansible_user }}/actions-runner:/home/runner/work
+          - /home/runner/actions-runner:/home/runner/work
           - /var/run/docker.sock:/var/run/docker.sock
         env:
           RUNNER_NAME: "{{ github_runner_name }}"
@@ -66,7 +75,6 @@
     - name: Show completed message
       debug:
         msg: |
-          GitHub runner setup completed successfully!
-          - VM ID: {{ hostvars['localhost']['vm_id'] }}
+          GitHub runner setup completed!
           - VM IP: {{ ansible_host }}
           - GitHub Runner Name: {{ github_runner_name }}
