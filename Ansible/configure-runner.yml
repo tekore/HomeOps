@@ -59,17 +59,16 @@
         mode: '0755'
     
     - name: Run GitHub runner docker container
-      docker_container:
-        name: github-runner
-        image: ghcr.io/actions/actions-runner:latest
-        restart_policy: always
-        volumes:
-          - /home/runner/actions-runner:/home/runner/work
-          - /var/run/docker.sock:/var/run/docker.sock
-        env:
-          RUNNER_NAME: "{{ github_runner_name }}"
-          REPO_URL: "{{ github_repo_url }}"
-          RUNNER_TOKEN: "{{ github_token }}"
+      shell: |
+        docker run -d \
+          --name github-runner \
+          --restart always \
+          -v /home/runner/actions-runner:/home/runner/work \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -e RUNNER_NAME="{{ github_runner_name }}" \
+          -e REPO_URL="{{ github_repo_url }}" \
+          -e RUNNER_TOKEN="{{ github_token }}" \
+          ghcr.io/actions/actions-runner:latest
       become: true
       
     - name: Show completed message
