@@ -8,7 +8,7 @@ To automate the install and configuration of my home infrastructure. This is a c
 
 ## Components
 - [Auto-Install](https://github.com/tekore/HomeOps/tree/main/Auto-Install)
-- [Ansible](https://github.com/tekore/HomeOps/tree/main/Anstible)
+- [Ansible](https://github.com/tekore/HomeOps/tree/main/Ansible)
 - [Terraform](https://github.com/tekore/HomeOps/tree/main/Terraform)
 - [Maintainers](#Maintainers)
 
