@@ -68,5 +68,6 @@
           -e RUNNER_NAME="{{ github_runner_name }}" \
           -e REPO_URL="{{ github_repo_url }}" \
           -e RUNNER_TOKEN="{{ github_token }}" \
-          ghcr.io/actions/actions-runner:latest
+          ghcr.io/actions/actions-runner:latest \
+          rm -rf /home/runner/_work && ./config.sh --url "$REPO_URL" --token "$RUNNER_TOKEN" --name "$RUNNER_NAME" --unattended --replace
       become: true
