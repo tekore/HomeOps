@@ -12,16 +12,32 @@ To automate the installation and configuration of my home infrastructure. This i
 
 ## Technical Overview
 ```mermaid
-graph TD;
-    Boot-From-USB-->Proxmox-Installs;
-    Proxmox-Installs-->Firstboot-Script-runs;
-    Firstboot-Script-runs-->GitHub-Actions-VM-Created;
-    GitHub-Actions-VM-Created-->Actions-VM-Pulls-Playbook;
-    Actions-VM-Pulls-Playbook-->Actions-Container-installed;
-    Actions-Container-installed-->Container-self-registers;
-    Container-self-registers-->Pipeline-triggered;
-    Pipeline-triggered-->Terraform-Build;
-    Terraform-Build-->VMs-Ansible-Pull;
+flowchart LR
+    Boot["🔌 Boot From USB"] --> Proxmox["💾 Proxmox Installation"]
+    Proxmox --> FirstBoot["🚀 Firstboot Script"]
+    FirstBoot --> GithubVM["🖥️ GitHub Actions VM"]
+    GithubVM --> PullPlaybook["📥 Pulls Playbook"]
+    
+    %% Second row, flowing back to the left
+    PullPlaybook --> ActionsContainer["🐳 Actions Container"]
+    ActionsContainer --> SelfRegister["📝 Self-Registers"]
+    SelfRegister --> Pipeline["⚙️ Pipeline Triggered"]
+    
+    %% Third row, flowing right again
+    Pipeline --> Terraform["🏗️ Terraform Build"]
+    Terraform --> AnsiblePull["🔄 VMs Ansible Pull"]
+    
+    %% Styling
+    style Boot fill:#d5e8d4,stroke:#82b366,color:#333
+    style Proxmox fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style FirstBoot fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style GithubVM fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style PullPlaybook fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style ActionsContainer fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style SelfRegister fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style Pipeline fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style Terraform fill:#dae8fc,stroke:#6c8ebf,color:#333
+    style AnsiblePull fill:#ffe6cc,stroke:#d79b00,color:#333
 ```
 
 ## Common Pitfalls
