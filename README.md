@@ -12,7 +12,7 @@ To automate the installation and configuration of my home infrastructure. This i
 
 ## Technical Overview
 ```mermaid
-flowchart LR
+flowchart TD
     Boot["🔌 Boot From USB"] --> Proxmox["💾 Proxmox Installation"]
     Proxmox --> FirstBoot["🚀 Firstboot Script"]
     FirstBoot --> GithubVM["🖥️ GitHub Actions VM"]
