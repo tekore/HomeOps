@@ -13,10 +13,15 @@ To automate the installation and configuration of my home infrastructure. This i
 ## Technical Overview
 ```mermaid
 graph TD;
-    Boot-From-USB-->Install-proxmox-using-answers.toml;
-    Install-proxmox-using-answers.toml-->C;
-    C-->D;
-    D-->E;
+    Boot-From-USB-->Proxmox-Installs;
+    Proxmox-Installs-->Firstboot-Script-runs;
+    Firstboot-Script-runs-->GitHub-Actions-VM-Created;
+    GitHub-Runner-VM-Created-->Actions-VM-Pulls-Playbook;
+    Actions-VM-Pulls-Playbook-->Actions-Container-installed;
+    Actions-Container-installed-->Actions-Container-self-registers;
+    Actions-Container-self-registers-->Pipeline-triggered;
+    Pipeline-triggered-->Terraform-Build;
+    Terraform-Build-->VMs-Ansible-Pull;
 ```
 
 ## Common Pitfalls
