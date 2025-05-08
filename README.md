@@ -4,8 +4,7 @@
 Here you'll find automation from the baremetal proxmox install to the Kubernetes ConfigMaps.
 
 ## Goal
-To automate the install and configuration of my home infrastructure. This is a complete solution, from a blank bare metal state to a fully function Proxmox install including self hosted GitHub Actions runners, Kubernetes clusters, OpenWRT routers and more. The only manual step is plugging the two USB drives into the target server.
-
+To automate the installation and configuration of my home infrastructure. This is a complete solution, from a blank bare metal state to a fully function Proxmox install including self hosted GitHub Actions runners, Kubernetes clusters, OpenWRT routers and more. The only manual step is plugging the two USB drives into the target server.
 ## Components
 - [Auto-Install](https://github.com/tekore/HomeOps/tree/main/Auto-Install)
 - [Ansible](https://github.com/tekore/HomeOps/tree/main/Ansible)
@@ -14,9 +13,10 @@ To automate the install and configuration of my home infrastructure. This is a c
 ## Technical Overview
 ```mermaid
 graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
+    Boot From USB-->Install proxmox using 'answers.toml';
+    Install proxmox using 'answers.toml'-->C;
+    C-->D;
+    D-->E;
 ```
 
 ## Common Pitfalls
@@ -26,7 +26,7 @@ docker stop github-runner
 docker rm github-runner
 ansible-pull -U $ANSIBLE_REPO_URL -i localhost --purge $ANSIBLE_REPO_PLAYBOOK --extra-vars "@/tmp/runner_secrets.yml"
 ```
-##### Note: These variables are defined in the first-boot-script.sh, for me the values are "https://github.com/tekore/HomeOps.git" and "Ansible/configure-runner.yml"
+###### Note: These variables are defined in the first-boot-script.sh, for me the values are "https://github.com/tekore/HomeOps.git" and "Ansible/configure-runner.yml"
 
 ## Maintainers
 [@Tekore](https://github.com/tekore)
