@@ -13,8 +13,8 @@ To automate the installation and configuration of my home infrastructure. This i
 ## Technical Overview
 ```mermaid
 graph TD;
-    Boot From USB-->Install proxmox using 'answers.toml';
-    Install proxmox using 'answers.toml'-->C;
+    Boot-From-USB-->Install-proxmox-using-answers.toml;
+    Install-proxmox-using-answers.toml-->C;
     C-->D;
     D-->E;
 ```
