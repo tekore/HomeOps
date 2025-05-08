@@ -1,6 +1,6 @@
 name: Onprem Infra
 run-name: Terraform Build
-on: [merge]
+on: [push]
 jobs:
   Terraform:
     name: Run Terraform
