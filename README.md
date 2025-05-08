@@ -13,20 +13,16 @@ To automate the installation and configuration of my home infrastructure. This i
 ## Technical Overview
 ```mermaid
 flowchart TD
-    Boot["🔌 Boot From USB"] --> Proxmox["💾 Proxmox Installation"]
+    Boot["🔌 Server Boot via USB"] --> Proxmox["💾 Proxmox Installation"]
     Proxmox --> FirstBoot["🚀 Firstboot Script"]
-    FirstBoot --> GithubVM["🖥️ GitHub Actions VM"]
-    GithubVM --> PullPlaybook["📥 Pulls Playbook"]
-    
-    %% Second row, flowing back to the left
-    PullPlaybook --> ActionsContainer["🐳 Actions Container"]
-    ActionsContainer --> SelfRegister["📝 Self-Registers"]
+    FirstBoot --> GithubVM["🖥️ GitHub Actions VM Installed"]
+    GithubVM --> PullPlaybook["📥 Actions VM Pulls Playbook"]
+    PullPlaybook --> ActionsContainer["🐳 Actions Container Installed"]
+    ActionsContainer --> SelfRegister["📝 Container Self-Registers"]
     SelfRegister --> Pipeline["⚙️ Pipeline Triggered"]
-    
-    %% Third row, flowing right again
     Pipeline --> Terraform["🏗️ Terraform Build"]
-    Terraform --> AnsiblePull["🔄 VMs Ansible Pull"]
-    
+    Terraform --> AnsiblePull["🔄 All VMs Ansible Pull"]
+
     %% Styling
     style Boot fill:#d5e8d4,stroke:#82b366,color:#333
     style Proxmox fill:#dae8fc,stroke:#6c8ebf,color:#333
