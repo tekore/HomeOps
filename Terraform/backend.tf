@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket = "terraform-state"
     key = ""
-    endpoint = ""
+    endpoint = var.r2_endpoint
     region = "auto"  # Required for Cloudflare R2 Storage
     skip_credentials_validation = true
     skip_region_validation = true
