@@ -62,6 +62,19 @@
         group: "runner"
         mode: '0755'
     
+    - name: Create entrypoint script
+      become: true
+      become_user: runner
+      copy:
+        dest: /home/runner/entrypoint.sh
+        content: |
+          #!/bin/bash
+          set -e
+          rm -rf /home/runner/_work
+          ./config.sh --url "${REPO_URL}" --token "${RUNNER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
+          ./run.sh
+        mode: '0755'
+
     - name: Run GitHub runner docker container
       become: true
       become_user: runner
@@ -71,9 +84,9 @@
           --restart always \
           -v /home/runner/actions-runner:/home/runner/work \
           -v /var/run/docker.sock:/var/run/docker.sock \
+          -v /home/runner/entrypoint.sh:/entrypoint.sh \
           -e RUNNER_NAME="{{ github_runner_name }}" \
           -e REPO_URL="{{ github_repo_url }}" \
           -e RUNNER_TOKEN="{{ github_token }}" \
           ghcr.io/actions/actions-runner:latest \
-          rm -rf /home/runner/_work && ~/config.sh --url "$REPO_URL" --token "$RUNNER_TOKEN" --name "$RUNNER_NAME" --unattended --replace \
-          ./run.sh
+          /entrypoint.sh
