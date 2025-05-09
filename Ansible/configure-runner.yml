@@ -10,6 +10,10 @@
     github_runner_name: ""
     github_token: ""
   tasks:
+    - name: Set the hostname
+      ansible.builtin.hostname:
+        name: GitRunner
+    
     - name: Add the runner user if not already created
       ansible.builtin.user:
         name: runner
