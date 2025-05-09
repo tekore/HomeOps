@@ -1,5 +1,5 @@
-//vms.tf
-variable "access" {
+//main.tf
+variable "axis-access" {
   type = map(string)
   default = {
    endpoint = ""

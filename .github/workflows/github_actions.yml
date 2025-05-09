@@ -1,4 +1,4 @@
-name: Onprem Infra
+name: Onprem Infrastructure
 run-name: Terraform Build
 on: [push]
 jobs:
@@ -9,7 +9,6 @@ jobs:
       run:
         working-directory: ./terraform
     env:
-      TF_VAR_r2_endpoint: ${{ secrets.R2_ENDPOINT }}
       TF_VAR_r2_access_key: ${{ secrets.R2_ACCESS_KEY }}
       TF_VAR_r2_secret_key: ${{ secrets.R2_SECRET_KEY }}
     steps:
