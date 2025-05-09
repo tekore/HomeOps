@@ -4,6 +4,7 @@ on: [push]
 jobs:
   Terraform:
     name: Run Terraform
+    environment: Selfhosted-runner
     runs-on: self-hosted
     defaults:
       run:
