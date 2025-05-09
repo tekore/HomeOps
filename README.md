@@ -44,6 +44,6 @@ docker rm github-runner
 ansible-pull -U $ANSIBLE_REPO_URL -i localhost --purge $ANSIBLE_REPO_PLAYBOOK --extra-vars "@/tmp/runner_secrets.yml"
 ```
 ###### Note: These variables are defined in the first-boot-script.sh, for me the values are "https://github.com/tekore/HomeOps.git" and "Ansible/configure-runner.yml"
-
+dwdwad
 ## Maintainers
 [@Tekore](https://github.com/tekore)
