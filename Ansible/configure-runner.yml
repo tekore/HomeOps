@@ -107,7 +107,7 @@
         docker run -d \
           --name github-runner \
           --restart always \
-          -v /home/runner/actions-runner:/home/runner \
+          -v /home/runner/actions-runner:/home/runner/work \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v /home/runner/entrypoint.sh:/entrypoint.sh \
           -e RUNNER_NAME="{{ github_runner_name }}" \
