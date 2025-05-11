@@ -21,11 +21,11 @@ jobs:
           node-version: '14'
 
       - name: Define Access variables
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ env.TF_VAR_r2_access_key }}
           aws-secret-access-key: ${{ env.TF_VAR_r2_secret_key }}
-          aws-region: auto
+          aws-region: eu-west-2
           
       - name: Download tfvars file
         run: aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ./HomeOps.tfvars --endpoint-url "https://20daad79d4c8c17a1500d2d1a90b1b03.r2.cloudflarestorage.com"
