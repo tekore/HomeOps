@@ -51,4 +51,4 @@ jobs:
 
       - name: Terraform Apply (Main Branch Only)
         if: github.ref_name == 'main'
-        run: terraform apply -auto-approve tfplan -var-file=./HomeOps.tfvars
+        run: terraform apply -auto-approve tfplan
