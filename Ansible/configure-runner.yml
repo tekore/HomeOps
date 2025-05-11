@@ -86,12 +86,11 @@
 
           if [ -z "${REGISTER_TOKEN}" ]; then
             echo "Failed to obtain registration token. Check your GITHUB_PAT."
-            sleep 100
             exit 1
           fi
 
           # Configure and start the runner
-          echo "$(pwd && ls -la && ls -la /home)"
+          echo "$(whoami && pwd && ls -la && ls -la /home && find / -name config.sh)"
           ./config.sh --url ${REPO_URL} --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
 
           # Remove token from environment for security
