@@ -86,7 +86,7 @@
             "https://api.github.com/repos/${REPO_STRING}/actions/runners/registration-token" | grep '"token"' | cut -d '"' -f4)
 
           if [ -z "${REGISTER_TOKEN}" ]; then
-            echo "Failed to obtain registration token. Check your GITHUB_PAT."
+            echo "=== Failed to obtain registration token. Please check the github_pat token ==="
             exit 1
           fi
 
