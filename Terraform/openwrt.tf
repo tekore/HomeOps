@@ -1,7 +1,7 @@
 // Image download
 resource "null_resource" "openwrt_image_download" {
   provisioner "local-exec" {
-    command = "wget https://downloads.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-24.10.1-x86-64-generic-squashfs-combined-efi.img.gz"
+    command = "curl --output openwrt.img.gz https://downloads.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-24.10.1-x86-64-generic-squashfs-combined-efi.img.gz"
   }
   provisioner "local-exec" {
     when    = destroy
@@ -12,7 +12,7 @@ resource "null_resource" "openwrt_image_download" {
 // Unzip the Image
 resource "null_resource" "unzip_openwrt_image" {
   provisioner "local-exec" {
-    command = "gzip -q -d ${path.module}/openwrt-24.10.1-x86-64-generic-squashfs-combined-efi.img.gz 2>/dev/null || true"
+    command = "gzip -q -d ${path.module}/openwrt.img.gz 2>/dev/null || true"
   }
   depends_on = [null_resource.openwrt_image_download]
 }
