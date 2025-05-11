@@ -91,7 +91,7 @@
           fi
 
           # Configure and start the runner
-          /home/runner/config.sh --url ${REPO_URL} --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
+          /actions-runner/config.sh --url ${REPO_URL} --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
 
           # Remove token from environment for security
           unset REGISTER_TOKEN
