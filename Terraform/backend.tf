@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state"
+    bucket = "secrets"
     key = "terraform/state/Axis/terraform.tfstate"
     endpoint = "https://20daad79d4c8c17a1500d2d1a90b1b03.r2.cloudflarestorage.com"
     region = "auto"  # Required for Cloudflare R2 Storage

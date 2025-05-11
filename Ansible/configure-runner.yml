@@ -71,32 +71,32 @@
           #!/bin/bash
           set -e
 
-          # Clean up existing runner configuration and work directory
+          echo "=== Cleaning up existing runner configurations and work directories ==="
           rm -rf /home/runner/_work
           find /home/runner -name ".runner" -type f -delete
           find /home/runner -name ".credentials" -type d -exec rm -rf {} +
           find /home/runner -name ".credentials_rsaparams" -type f -delete
 
-          # Get a fresh registration token via GitHub API for repository
+          echo "=== Fetching a fresh registration token via the GitHub API ==="
+          REPO_STRING=$(echo ${REPO_URL} | cut -d'/' -f4,5)
           REGISTER_TOKEN=$(curl -s -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GITHUB_PAT}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/tekore/HomeOps/actions/runners/registration-token" | grep '"token"' | cut -d '"' -f4)
+            "https://api.github.com/repos/${REPO_STRING}/actions/runners/registration-token" | grep '"token"' | cut -d '"' -f4)
 
           if [ -z "${REGISTER_TOKEN}" ]; then
             echo "Failed to obtain registration token. Check your GITHUB_PAT."
             exit 1
           fi
 
-          # Configure and start the runner
-          echo "$(whoami && pwd && ls -la && ls -la /home && find / -name config.sh)"
+          echo "=== Configuring the runner ==="
           ./config.sh --url ${REPO_URL} --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
 
-          # Remove token from environment for security
+          echo "=== Removing the token from environment for security ==="
           unset REGISTER_TOKEN
 
-          # Start the runner
+          echo "=== Starting the runner ==="
           ./run.sh
         mode: '0755'
 
