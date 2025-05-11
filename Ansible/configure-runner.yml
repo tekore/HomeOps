@@ -91,7 +91,7 @@
           fi
 
           # Configure and start the runner
-          echo "pwd && ls -la && ls -la /home"
+          echo "$(pwd && ls -la && ls -la /home)"
           ./config.sh --url ${REPO_URL} --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
 
           # Remove token from environment for security
