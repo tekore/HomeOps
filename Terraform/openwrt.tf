@@ -23,7 +23,7 @@ resource "proxmox_virtual_environment_file" "openwrt_image_upload" {
   datastore_id = "local"
   node_name    = data.proxmox_virtual_environment_node.node.node_name
   source_file {
-    path = "${path.module}/openwrt-24.10.1-x86-64-generic-squashfs-combined-efi.img"
+    path = "${path.module}/openwrt.img"
   }
   depends_on = [null_resource.unzip_openwrt_image]
 }
@@ -66,9 +66,6 @@ resource "proxmox_virtual_environment_vm" "openwrt_vm" {
     interface    = "scsi0"
   }
 
-  #cdrom {
-  #  file_id = proxmox_virtual_environment_file.vyos_custom_iso_upload.id
-  #}
   hostpci {
     device = "hostpci1"
     id = "03:00.0"
