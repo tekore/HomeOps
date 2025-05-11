@@ -21,10 +21,13 @@ jobs:
           node-version: '14'
 
       - name: Download Variables
-        run: |
-          AWS_ACCESS_KEY_ID=$TF_VAR_r2_access_key AWS_SECRET_ACCESS_KEY=$TF_VAR_r2_secret_key \
-          aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ./HomeOps.tfvars \
-          --endpoint-url "https://20daad79d4c8c17a1500d2d1a90b1b03.r2.cloudflarestorage.com"
+        uses: docker://amazon/aws-cli:latest
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_r2_access_key }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_r2_secret_key }}
+          AWS_ENDPOINT_URL: https://20daad79d4c8c17a1500d2d1a90b1b03.r2.cloudflarestorage.com
+        with:
+          args: s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ./HomeOps.tfvars --endpoint-url $AWS_ENDPOINT_URL
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
