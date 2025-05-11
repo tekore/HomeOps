@@ -68,7 +68,7 @@ resource "proxmox_virtual_environment_vm" "openwrt_vm" {
 
   hostpci {
     device = "hostpci1"
-    id = "03:00.0"
+    id = "04:00.0"
   }
 
   initialization {
