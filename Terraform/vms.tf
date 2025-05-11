@@ -1,4 +1,4 @@
-// Ubuntu img download
+// Ubuntu image download
 resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qcow2_img" {
   content_type = "iso"
   datastore_id = "local"
