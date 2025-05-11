@@ -36,14 +36,5 @@ flowchart TD
     style AnsiblePull fill:#ffe6cc,stroke:#d79b00,color:#333
 ```
 
-## Common Pitfalls
-- When installing the GitHub runner, if the GitHub token is more than an hour old it will be expired. This will prevent the container from registering itself with GitHub. To 're-do' this step, update the file on the GitHub runner Virtual machine in '/tmp/runner_secrets.yml', killoff the old container and then pull the playbook again
-```sh
-docker stop github-runner
-docker rm github-runner
-ansible-pull -U $ANSIBLE_REPO_URL -i localhost --purge $ANSIBLE_REPO_PLAYBOOK --extra-vars "@/tmp/runner_secrets.yml"
-```
-###### Note: These variables are defined in the first-boot-script.sh, for me the values are "https://github.com/tekore/HomeOps.git" and "Ansible/configure-runner.yml"
-
 ## Maintainers
 [@Tekore](https://github.com/tekore)

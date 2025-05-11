@@ -70,8 +70,32 @@
         content: |
           #!/bin/bash
           set -e
+
+          # Clean up existing runner configuration and work directory
           rm -rf /home/runner/_work
-          ./config.sh --url "${REPO_URL}" --token "${RUNNER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
+          find /home/runner -name ".runner" -type f -delete
+          find /home/runner -name ".credentials" -type d -exec rm -rf {} +
+          find /home/runner -name ".credentials_rsaparams" -type f -delete
+
+          # Get a fresh registration token via GitHub API
+          REGISTER_TOKEN=$(curl -s -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_PAT}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${REPO_URL}/actions/runners/registration-token" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+
+          if [ -z "${REGISTER_TOKEN}" ]; then
+            echo "Failed to obtain registration token. Check your GITHUB_PAT and REPO_URL."
+            exit 1
+          fi
+
+          # Configure and start the runner
+          ./config.sh --url "${REPO_URL}" --token "${REGISTER_TOKEN}" --name "${RUNNER_NAME}" --unattended --replace
+          
+          # Remove token from environment for security
+          unset REGISTER_TOKEN
+          
+          # Start the runner
           ./run.sh
         mode: '0755'
 
@@ -82,11 +106,11 @@
         docker run -d \
           --name github-runner \
           --restart always \
-          -v /home/runner/actions-runner:/home/runner/work \
+          -v /home/runner/actions-runner:/home/runner \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v /home/runner/entrypoint.sh:/entrypoint.sh \
           -e RUNNER_NAME="{{ github_runner_name }}" \
           -e REPO_URL="{{ github_repo_url }}" \
-          -e RUNNER_TOKEN="{{ github_token }}" \
+          -e GITHUB_PAT="{{ github_pat }}" \
           ghcr.io/actions/actions-runner:latest \
           /entrypoint.sh
