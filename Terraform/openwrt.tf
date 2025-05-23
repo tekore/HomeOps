@@ -7,9 +7,9 @@ resource "null_resource" "openwrt_image_download" {
     when    = destroy
     command = "rm -f ./openwrt*.img*"
   }
-  lifecycle {
-    replace_triggered_by = [ proxmox_virtual_environment_vm.openwrt_vm.id ]
-  }
+  #lifecycle {
+  #  replace_triggered_by = [ proxmox_virtual_environment_vm.openwrt_vm.id ]
+  #}
 }
 
 // Unzip the Image
@@ -17,9 +17,9 @@ resource "null_resource" "unzip_openwrt_image" {
   provisioner "local-exec" {
     command = "gzip -q -d ${path.module}/openwrt.img.gz 2>/dev/null || true"
   }
-  lifecycle {
-    replace_triggered_by = [ proxmox_virtual_environment_vm.openwrt_vm.id ]
-  }
+  #lifecycle {
+  #  replace_triggered_by = [ proxmox_virtual_environment_vm.openwrt_vm.id ]
+  #}
   depends_on = [null_resource.openwrt_image_download]
 }
 
