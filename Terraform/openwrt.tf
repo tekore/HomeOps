@@ -7,12 +7,18 @@ resource "null_resource" "openwrt_image_download" {
     when    = destroy
     command = "rm -f ./openwrt*.img*"
   }
+  triggers = {
+    vm_id = proxmox_virtual_environment_vm.openwrt_vm.id
+  }
 }
 
 // Unzip the Image
 resource "null_resource" "unzip_openwrt_image" {
   provisioner "local-exec" {
     command = "gzip -q -d ${path.module}/openwrt.img.gz 2>/dev/null || true"
+  }
+  triggers = {
+    vm_id = proxmox_virtual_environment_vm.openwrt_vm.id
   }
   depends_on = [null_resource.openwrt_image_download]
 }
@@ -36,6 +42,9 @@ resource "proxmox_virtual_environment_file" "openwrt_image_upload" {
   node_name    = data.proxmox_virtual_environment_node.node.node_name
   source_file {
     path = "${path.module}/openwrt.img"
+  }
+  triggers = {
+    vm_id = proxmox_virtual_environment_vm.openwrt_vm.id
   }
   depends_on = [null_resource.unzip_openwrt_image]
 }
