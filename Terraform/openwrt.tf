@@ -17,6 +17,18 @@ resource "null_resource" "unzip_openwrt_image" {
   depends_on = [null_resource.openwrt_image_download]
 }
 
+############################
+# Template the file here 
+## Example ##
+#templatefile("${path.module}/backends.tftpl", { port = 8080, ip_addrs = ["10.0.0.1", "10.0.0.2"] })
+## Example ##
+##########################
+# Create the mount point directory
+# Mount the openwrt img
+# inject the files
+# Unmount the image
+##########################
+
 // Image upload
 resource "proxmox_virtual_environment_file" "openwrt_image_upload" {
   content_type = "iso"
@@ -84,10 +96,6 @@ resource "proxmox_virtual_environment_vm" "openwrt_vm" {
       username = "ubuntu"
     }
 
-  }
-
-  network_device {
-    bridge = "vmbr0"
   }
 
   network_device {

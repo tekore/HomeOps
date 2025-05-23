@@ -1,0 +1,88 @@
+config defaults
+	option syn_flood '1'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option flow_offloading '1'
+	option flow_offloading_hw '1'
+
+config zone
+	option name 'lan'
+	list network 'lan'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+
+config zone
+	option name 'wan'
+	list network 'wan'
+	list network 'wan6'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option masq '1'
+	option mtu_fix '1'
+
+# IoT zone with limited access
+config zone
+	option name 'iot'
+	list network 'iot'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+
+# Management zone
+config zone
+	option name 'mgmt'
+	list network 'mgmt'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+
+# Allow IoT devices to access the internet but not other zones
+config forwarding
+	option src 'iot'
+	option dest 'wan'
+
+# Allow LAN to access IoT devices
+config forwarding
+	option src 'lan'
+	option dest 'iot'
+
+# Allow LAN to access management network
+config forwarding
+	option src 'lan'
+	option dest 'mgmt'
+
+# Allow ping
+config rule
+	option name 'Allow-Ping'
+	option src '*'
+	option proto 'icmp'
+	option icmp_type 'echo-request'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+# Open SSH port 22 from LAN and management networks
+config rule
+	option name 'Allow-SSH'
+	list src 'lan'
+	list src 'mgmt'
+	option dest_port '22'
+	option proto 'tcp'
+	option target 'ACCEPT'
+
+# Allow HTTPS access to the router web interface only from LAN
+config rule
+	option name 'Allow-HTTPS'
+	option src 'lan'
+	option dest_port '443'
+	option proto 'tcp'
+	option target 'ACCEPT'
+
+# Block IoT devices from accessing router admin
+config rule
+	option name 'Block-IoT-Admin'
+	option src 'iot'
+	option dest_ip '192.168.1.1'
+	option target 'REJECT'

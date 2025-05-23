@@ -92,18 +92,21 @@ qm importdisk $VM_ID ubuntu_cloud.img $STORAGE
 qm set $VM_ID --scsihw virtio-scsi-pci --scsi0 $STORAGE:vm-${VM_ID}-disk-0
 qm resize $VM_ID scsi0 +15G
 
-# === Configure the cloud-init drive ===
-qm set $VM_ID --ide2 $STORAGE:cloudinit
-qm set $VM_ID --boot order=scsi0
-qm set $VM_ID --serial0 socket --vga serial0
-
 # === Enable snippets on the storage ===
 CURRENT_CONTENT=$(grep -A10 "^dir:" /etc/pve/storage.cfg | grep content | head -1 | cut -d' ' -f2)
 pvesm set local --content $CURRENT_CONTENT,snippets
 
+# === Configure the cloud-init drive ===
+qm set $VM_ID --ide2 $STORAGE:cloudinit
+qm set $VM_ID --boot order=scsi0
+
 # === Apply cloud-init settings ===
 qm set $VM_ID --cicustom "user=local:snippets/cloudinit.yml"
+
+# === Configure generic settings ===
+qm set $VM_ID --serial0 socket --vga serial0
 qm set $VM_ID --ipconfig0 ip=dhcp
+qm set $VM_ID --onboot 1
 
 # === Start the virtual machine ===
 qm start $VM_ID

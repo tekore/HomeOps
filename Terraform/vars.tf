@@ -9,3 +9,8 @@ variable "axis-access" {
     password = ""
   }
 }
+
+variable "openwrt-inject-files" {
+  type        = map(string)
+  description = "Files to inject into the OpenWRT Image"
+}
