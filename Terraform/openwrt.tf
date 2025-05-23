@@ -44,7 +44,7 @@ resource "proxmox_virtual_environment_file" "openwrt_image_upload" {
     path = "${path.module}/openwrt.img"
   }
   lifecycle {
-    replace_triggered_by = [ proxmox_virtual_environment_vm.openwrt_vm.id ]
+    replace_triggered_by = [ proxmox_virtual_environment_vm.unzip_openwrt_image.id ]
   }
   depends_on = [ null_resource.unzip_openwrt_image ]
 }
