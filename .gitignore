@@ -1,3 +1,4 @@
-openwrt-24*
+.terraform.*
+tfplan
 *.tfvars
 runner_secrets.*

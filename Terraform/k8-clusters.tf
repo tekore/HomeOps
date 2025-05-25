@@ -1,1 +1,0 @@
-// K8 Cluster virtual machines

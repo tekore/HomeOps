@@ -11,7 +11,7 @@ root-ssh-keys = ["ssh-ed25519 AAPPC3NzaCDDCWZDI1NTE5AAAAIG..."]
 source = "from-answer"
 cidr = "192.168.1.100/24"
 dns = "8.8.8.8"
-gateway = "192.168.1.1"
+gateway = "192.168.1.254"
 filter.INTERFACE = "eno1"
 
 [disk-setup]

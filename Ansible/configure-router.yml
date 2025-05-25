@@ -1,0 +1,161 @@
+---
+# all bogus values for now for testing
+- name: Configure Ubuntu Router
+  connection: local
+  become: true
+  become_user: root
+  hosts: localhost
+  vars:
+    # Interfaces
+    wan_interface: "eth0"
+    lan_interface: "ens17"
+    
+    # Network settings
+    lan_network: "10.10.1.1/24"
+    gateway_ip: "192.168.1.254"
+    
+    # Port forwards
+    port_forwards:
+      - { ext: "80", ip: "192.168.1.111", int: "80" }
+ 
+    # WAN services (gateway access from internet)
+    wan_services:
+      - "22"
+    blocked_ips:
+      - "1.2.3.4"
+      - "10.0.0.0/8"
+  tasks:
+    - name: Install iptables-persistent
+      apt:
+        name: 
+          - iptables-persistent
+          - netfilter-persistent
+        state: present
+        update_cache: yes
+
+    - name: Enable IP forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        reload: yes
+
+    - name: Flush all iptables rules
+      iptables:
+        flush: yes
+        table: "{{ item }}"
+      loop:
+        - filter
+        - nat
+
+    - name: Set default policies
+      iptables:
+        chain: "{{ item }}"
+        policy: DROP
+      loop:
+        - INPUT
+        - FORWARD
+
+    - name: Set OUTPUT policy to ACCEPT
+      iptables:
+        chain: OUTPUT
+        policy: ACCEPT
+
+    - name: Allow loopback traffic
+      iptables:
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow established and related connections - INPUT
+      iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow established and related connections - FORWARD
+      iptables:
+        chain: FORWARD
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow LAN to access gateway
+      iptables:
+        chain: INPUT
+        source: "{{ lan_network }}"
+        jump: ACCEPT
+
+    - name: Allow LAN to internet
+      iptables:
+        chain: FORWARD
+        source: "{{ lan_network }}"
+        out_interface: "{{ wan_interface }}"
+        jump: ACCEPT
+
+    - name: NAT rule for internet access
+      iptables:
+        table: nat
+        chain: POSTROUTING
+        source: "{{ lan_network }}"
+        out_interface: "{{ wan_interface }}"
+        jump: MASQUERADE
+
+    - name: Port forward NAT rules
+      iptables:
+        table: nat
+        chain: PREROUTING
+        in_interface: "{{ wan_interface }}"
+        protocol: tcp
+        destination_port: "{{ item.ext }}"
+        jump: DNAT
+        to_destination: "{{ item.ip }}:{{ item.int }}"
+      loop: "{{ port_forwards }}"
+
+    - name: Port forward FORWARD rules
+      iptables:
+        chain: FORWARD
+        destination: "{{ item.ip }}"
+        protocol: tcp
+        destination_port: "{{ item.int }}"
+        jump: ACCEPT
+      loop: "{{ port_forwards }}"
+
+    - name: Allow WAN services to gateway
+      iptables:
+        chain: INPUT
+        in_interface: "{{ wan_interface }}"
+        protocol: tcp
+        destination_port: "{{ item }}"
+        jump: ACCEPT
+      loop: "{{ wan_services }}"
+
+    - name: Block bad IPs - INPUT
+      iptables:
+        chain: INPUT
+        source: "{{ item }}"
+        jump: DROP
+      loop: "{{ blocked_ips }}"
+
+    - name: Block bad IPs - FORWARD
+      iptables:
+        chain: FORWARD
+        source: "{{ item }}"
+        jump: DROP
+      loop: "{{ blocked_ips }}"
+
+    - name: Save iptables rules
+      shell: iptables-save > /etc/iptables/rules.v4
+
+    - name: Enable netfilter-persistent
+      systemd:
+        name: netfilter-persistent
+        enabled: yes
+        state: started
+
+    - name: Show current iptables rules
+      command: iptables -L -n -v
+      register: current_rules
+
+    - name: Display active firewall rules
+      debug:
+        msg: "{{ current_rules.stdout_lines }}"
