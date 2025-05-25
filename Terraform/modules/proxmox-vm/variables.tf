@@ -73,7 +73,7 @@ variable "startup_down_delay" {
 variable "cpu_cores" {
   description = "Number of CPU cores"
   type        = number
-  default     = 6
+  default     = 2
 }
 
 variable "cpu_type" {
@@ -127,6 +127,11 @@ variable "password" {
   description = "Password"
   type        = string
   sensitive   = true
+}
+
+variable "ssh-key" {
+  description = "SSH Public Key"
+  type        = list
 }
 
 variable "network_bridge" {

@@ -9,13 +9,3 @@ variable "axis-access" {
     password = ""
   }
 }
-
-variable "openwrt-inject-files" {
-  type        = map(string)
-  description = "Files to inject into the OpenWRT Image"
-  default = {
-    dhcp = "./Files/openwrt_dhcp"
-    firewall = "./Files/openwrt_firewall"
-    network = "./Files/openwrt_network"
-  }
-}
