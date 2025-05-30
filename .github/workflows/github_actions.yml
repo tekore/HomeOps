@@ -52,3 +52,30 @@ jobs:
       - name: Terraform Apply (Main Branch Only)
         if: github.ref_name == 'main'
         run: terraform apply -auto-approve tfplan
+# Will need to change the playbooks into roles and then use a playbook with regex to determine what role to run on each host
+  Ansible:
+    name: Run Ansible
+    environment: Selfhosted-runner
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: Ansible
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Install Ansible Galaxy Collection
+        run: ansible-galaxy collection install community.general --upgrade
+
+      - name: Run Ansible Playbook
+        run: ansible-playbook -i inventories/proxmox.yml configure-router.yml

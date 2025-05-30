@@ -112,9 +112,15 @@ variable "disk_interface" {
 }
 
 variable "ip_address" {
-  description = "IP address (can use DHCP)"
+  description = "IP address (can use dhcp)"
   type        = string
-  default     = "dhcp"
+  default     = "192.168.1.201/24"
+}
+
+variable "gateway" {
+  description = "gateway for network"
+  type        = string
+  default     = "192.168.1.254"
 }
 
 variable "username" {

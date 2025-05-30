@@ -1,11 +1,14 @@
 ---
-# all bogus values for now for testing
+#### USE ANSIBLE PULL!!
+#
+## all bogus values for now for testing
 - name: Configure Ubuntu Router
-  connection: local
+  hosts: Router
   become: true
   become_user: root
-  hosts: localhost
+  remote_user: ubuntu
   vars:
+    ansible_ssh_private_key_file: /home/tekore/Devops/HomeOps/Ansible/Keys/id_rsa
     # Interfaces
     wan_interface: "eth0"
     lan_interface: "ens17"
