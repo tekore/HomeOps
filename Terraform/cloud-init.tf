@@ -1,6 +1,6 @@
 resource "proxmox_virtual_environment_file" "router_user_data" {
   content_type = "snippets"
-  datastore_id = "local-zfs"
+  datastore_id = "local"
   node_name    = data.proxmox_virtual_environment_node.node.node_name
 
   source_raw {
@@ -29,7 +29,7 @@ resource "proxmox_virtual_environment_file" "router_user_data" {
 
 resource "proxmox_virtual_environment_file" "router_network_data" {
   content_type = "snippets"
-  datastore_id = "local-zfs"
+  datastore_id = "local"
   node_name    = data.proxmox_virtual_environment_node.node.node_name
 
   source_raw {
