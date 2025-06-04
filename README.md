@@ -35,8 +35,6 @@ flowchart TD
     style Terraform fill:#dae8fc,stroke:#6c8ebf,color:#333
     style AnsiblePull fill:#ffe6cc,stroke:#d79b00,color:#333
 ```
-## Restrictions
-Your router IP has to be something different than 192.168.1.254 as to not conflict with the OPNsense Image
 
 ## Maintainers
 [@Tekore](https://github.com/tekore)

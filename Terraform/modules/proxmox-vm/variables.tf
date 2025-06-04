@@ -111,35 +111,6 @@ variable "disk_interface" {
   default     = "scsi0"
 }
 
-variable "ip_address" {
-  description = "IP address (can use dhcp)"
-  type        = string
-  default     = "192.168.1.201/24"
-}
-
-variable "gateway" {
-  description = "gateway for network"
-  type        = string
-  default     = "192.168.1.254"
-}
-
-variable "username" {
-  description = "User account"
-  type        = string
-  default     = "ubuntu"
-}
-
-variable "password" {
-  description = "Password"
-  type        = string
-  sensitive   = true
-}
-
-variable "ssh-key" {
-  description = "SSH Public Key"
-  type        = list
-}
-
 variable "network_bridge" {
   description = "Virtual machine network"
   type        = string
@@ -150,4 +121,14 @@ variable "os_type" {
   description = "OS type"
   type        = string
   default     = "l26"
+}
+
+variable "user_data" {
+  description = "user_data file for cloudinit"
+  type        = string
+}
+
+variable "network_data" {
+  description = "network_data file for cloudinit"
+  type        = string
 }

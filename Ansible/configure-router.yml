@@ -1,22 +1,20 @@
 ---
-#### USE ANSIBLE PULL!!
-#
 ## all bogus values for now for testing
-- name: Configure Ubuntu Router
-  hosts: Router
+- name: Configure Ubuntu Router with UFW
+  connection: local
   become: true
   become_user: root
-  remote_user: ubuntu
+  hosts: localhost
   vars:
-    ansible_ssh_private_key_file: /home/tekore/Devops/HomeOps/Ansible/Keys/id_rsa
     # Interfaces
-    wan_interface: "eth0"
-    lan_interface: "ens17"
-    
+    wan_interface: "ens17"
+    lan_interface: "eth0"
+
     # Network settings
-    lan_network: "10.10.1.1/24"
+    lan_network: "10.10.1.0/24"
+    lan_subnet: "10.10.1.0/24"
     gateway_ip: "192.168.1.254"
-    
+
     # Port forwards
     port_forwards:
       - { ext: "80", ip: "192.168.1.111", int: "80" }
@@ -28,13 +26,18 @@
       - "1.2.3.4"
       - "10.0.0.0/8"
   tasks:
-    - name: Install iptables-persistent
+    - name: Install UFW
       apt:
-        name: 
-          - iptables-persistent
-          - netfilter-persistent
+        name: ufw
         state: present
         update_cache: yes
+
+    - name: Disable IPv6 in UFW
+      lineinfile:
+        path: /etc/default/ufw
+        regexp: '^IPV6='
+        line: 'IPV6=no'
+        backup: yes
 
     - name: Enable IP forwarding
       sysctl:
@@ -43,119 +46,103 @@
         state: present
         reload: yes
 
-    - name: Flush all iptables rules
-      iptables:
-        flush: yes
-        table: "{{ item }}"
+    - name: Reset UFW to defaults
+      ufw:
+        state: reset
+
+    - name: Set UFW default policies
+      ufw:
+        default: "{{ item.direction }}"
+        policy: "{{ item.policy }}"
       loop:
-        - filter
-        - nat
+        - { direction: 'incoming', policy: 'deny' }
+        - { direction: 'outgoing', policy: 'allow' }
+        - { direction: 'routed', policy: 'deny' }
 
-    - name: Set default policies
-      iptables:
-        chain: "{{ item }}"
-        policy: DROP
-      loop:
-        - INPUT
-        - FORWARD
+    - name: Allow SSH (preserve connection)
+      ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
 
-    - name: Set OUTPUT policy to ACCEPT
-      iptables:
-        chain: OUTPUT
-        policy: ACCEPT
+    - name: Allow traffic from LAN subnet
+      ufw:
+        rule: allow
+        from_ip: "{{ lan_subnet }}"
 
-    - name: Allow loopback traffic
-      iptables:
-        chain: INPUT
-        in_interface: lo
-        jump: ACCEPT
+    - name: Allow routing from LAN to WAN
+      ufw:
+        rule: allow
+        route: yes
+        from_ip: "{{ lan_subnet }}"
+        interface_out: "{{ wan_interface }}"
 
-    - name: Allow established and related connections - INPUT
-      iptables:
-        chain: INPUT
-        ctstate: ESTABLISHED,RELATED
-        jump: ACCEPT
-
-    - name: Allow established and related connections - FORWARD
-      iptables:
-        chain: FORWARD
-        ctstate: ESTABLISHED,RELATED
-        jump: ACCEPT
-
-    - name: Allow LAN to access gateway
-      iptables:
-        chain: INPUT
-        source: "{{ lan_network }}"
-        jump: ACCEPT
-
-    - name: Allow LAN to internet
-      iptables:
-        chain: FORWARD
-        source: "{{ lan_network }}"
-        out_interface: "{{ wan_interface }}"
-        jump: ACCEPT
-
-    - name: NAT rule for internet access
-      iptables:
-        table: nat
-        chain: POSTROUTING
-        source: "{{ lan_network }}"
-        out_interface: "{{ wan_interface }}"
-        jump: MASQUERADE
-
-    - name: Port forward NAT rules
-      iptables:
-        table: nat
-        chain: PREROUTING
-        in_interface: "{{ wan_interface }}"
-        protocol: tcp
-        destination_port: "{{ item.ext }}"
-        jump: DNAT
-        to_destination: "{{ item.ip }}:{{ item.int }}"
-      loop: "{{ port_forwards }}"
-
-    - name: Port forward FORWARD rules
-      iptables:
-        chain: FORWARD
-        destination: "{{ item.ip }}"
-        protocol: tcp
-        destination_port: "{{ item.int }}"
-        jump: ACCEPT
-      loop: "{{ port_forwards }}"
-
-    - name: Allow WAN services to gateway
-      iptables:
-        chain: INPUT
-        in_interface: "{{ wan_interface }}"
-        protocol: tcp
-        destination_port: "{{ item }}"
-        jump: ACCEPT
+    - name: Allow WAN services
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+        interface: "{{ wan_interface }}"
+        direction: in
       loop: "{{ wan_services }}"
 
-    - name: Block bad IPs - INPUT
-      iptables:
-        chain: INPUT
-        source: "{{ item }}"
-        jump: DROP
+    - name: Allow port forwards - incoming
+      ufw:
+        rule: allow
+        port: "{{ item.ext }}"
+        proto: tcp
+        interface: "{{ wan_interface }}"
+        direction: in
+      loop: "{{ port_forwards }}"
+
+    - name: Allow port forwards - routing to internal IPs
+      ufw:
+        rule: allow
+        route: yes
+        to_ip: "{{ item.ip }}"
+        to_port: "{{ item.int }}"
+        proto: tcp
+      loop: "{{ port_forwards }}"
+
+    - name: Block bad IPs
+      ufw:
+        rule: deny
+        from_ip: "{{ item }}"
       loop: "{{ blocked_ips }}"
 
-    - name: Block bad IPs - FORWARD
-      iptables:
-        chain: FORWARD
-        source: "{{ item }}"
-        jump: DROP
-      loop: "{{ blocked_ips }}"
+    - name: Configure UFW for NAT/Masquerading
+      blockinfile:
+        path: /etc/ufw/before.rules
+        insertbefore: "# Don't delete these required lines"
+        block: |
+          # NAT table rules for router functionality
+          *nat
+          :POSTROUTING ACCEPT [0:0]
+          
+          # Forward traffic from LAN to WAN with masquerading
+          -A POSTROUTING -s {{ lan_subnet }} -o {{ wan_interface }} -j MASQUERADE
+          
+          # Port forwarding rules
+          {% for forward in port_forwards %}
+          -A PREROUTING -i {{ wan_interface }} -p tcp --dport {{ forward.ext }} -j DNAT --to-destination {{ forward.ip }}:{{ forward.int }}
+          {% endfor %}
+          
+          COMMIT
+        marker: "# {mark} ANSIBLE MANAGED NAT RULES"
 
-    - name: Save iptables rules
-      shell: iptables-save > /etc/iptables/rules.v4
+    - name: Enable UFW
+      ufw:
+        state: enabled
 
-    - name: Enable netfilter-persistent
-      systemd:
-        name: netfilter-persistent
-        enabled: yes
-        state: started
+    - name: Show UFW status
+      command: ufw status verbose
+      register: ufw_status
 
-    - name: Show current iptables rules
+    - name: Display UFW rules
+      debug:
+        msg: "{{ ufw_status.stdout_lines }}"
+
+    - name: Show current iptables rules (for verification)
       command: iptables -L -n -v
       register: current_rules
 

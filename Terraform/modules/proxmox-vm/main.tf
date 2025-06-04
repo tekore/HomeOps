@@ -47,29 +47,17 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
     }
   }
 
-  initialization {
-    datastore_id = var.datastore_id
-    ip_config {
-      ipv4 {
-        address = var.ip_address
-        gateway = var.gateway
-      }
-    }
-
-    user_account {
-      password = var.password
-      username = var.username
-      keys = var.ssh-key
-    }
-  }
-
   network_device {
     bridge = var.network_bridge
+  }
+
+  initialization {
+    datastore_id = var.datastore_id
+    user_data_file_id = var.user_data
+    network_data_file_id = var.network_data
   }
 
   operating_system {
     type = var.os_type
   }
-
-  serial_device {}
 }
