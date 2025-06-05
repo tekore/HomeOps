@@ -117,6 +117,12 @@ variable "network_bridge" {
   default     = "vmbr0"
 }
 
+variable "mac_address" {
+  description = "Mac address for the LAN interface"
+  type        = string
+  default     = "a1:10:ce:34:ee:ff"
+}
+
 variable "os_type" {
   description = "OS type"
   type        = string

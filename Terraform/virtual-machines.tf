@@ -7,17 +7,17 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
 }
 
 // Bastion Virtual Machine
-module "bastion_virtual_machine" {
-  source = "./modules/proxmox-vm"  
-  vm_name     = "Bastion"
-  vm_tags     = ["Terraform", "Ubuntu", "Bastion"]
-  node_name   = data.proxmox_virtual_environment_node.node.node_name
-  vm_id       = 1010
-  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-  network_bridge = "vmbr99"
-  user_data = proxmox_virtual_environment_file.router_user_data.id
-  network_data = proxmox_virtual_environment_file.router_network_data.id
-}
+#module "bastion_virtual_machine" {
+#  source = "./modules/proxmox-vm"  
+#  vm_name     = "Bastion"
+#  vm_tags     = ["Terraform", "Ubuntu", "Bastion"]
+#  node_name   = data.proxmox_virtual_environment_node.node.node_name
+#  vm_id       = 1010
+#  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+#  network_bridge = "vmbr99"
+#  user_data = proxmox_virtual_environment_file.router_user_data.id
+#  network_data = proxmox_virtual_environment_file.router_network_data.id
+#}
 
 // Axis Router Virtual Machine
 module "router_virtual_machine" {
@@ -32,7 +32,7 @@ module "router_virtual_machine" {
     id = "03:00.0"
   }
   network_bridge = "vmbr99"
+  mac_address = "00:1a:2b:3c:4d:5e"
   user_data = proxmox_virtual_environment_file.router_user_data.id
   network_data = proxmox_virtual_environment_file.router_network_data.id
-  
 }

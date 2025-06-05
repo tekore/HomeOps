@@ -49,15 +49,28 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
 
   network_device {
     bridge = var.network_bridge
+    mac_address = var.mac_address
   }
 
   initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
     datastore_id = var.datastore_id
     user_data_file_id = var.user_data
-    network_data_file_id = var.network_data
+    #network_data_file_id = var.network_data
   }
 
   operating_system {
     type = var.os_type
   }
+
+  serial_device {}
+
+  vga {
+    type = "serial0"
+  }
+
 }
