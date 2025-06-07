@@ -6,8 +6,8 @@ resource "proxmox_virtual_environment_file" "router_user_data" {
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: ${var.cloud-init.hostname}
-    timezone: ${var.cloud-init.timezone}
+    hostname: ${var.cloudinit.hostname}
+    timezone: ${var.cloudinit.timezone}
     users:
       - default
       - name: tekore
@@ -16,9 +16,9 @@ resource "proxmox_virtual_environment_file" "router_user_data" {
         shell: /bin/bash
         sudo: ALL=(ALL) NOPASSWD:ALL
         lock_passwd: false
-        passwd: ${var.cloud-init.password-hash}
+        passwd: ${var.cloudinit.passwordhash}
         ssh_authorized_keys:
-          - ${var.cloud-init.ssh-key}
+          - ${var.cloudinit.sshkey}
     package_update: true
     packages:
       - ansible
@@ -45,13 +45,13 @@ resource "proxmox_virtual_environment_file" "router_network_data" {
       ethernets:
         wan:
           match:
-            macaddress: {var.mac-addresses.router-wan}
+            macaddress: ${var.macaddresses.routerwan}
           set-name: wan0
           addresses:
-            - ${var.ip-addresses.router-wan}
+            - ${var.ipaddresses.routerwan}
           routes:
           - to: default
-            via: ${var.ip-addresses.gateway}
+            via: ${var.ipaddresses.gateway}
           nameservers:
             addresses: [8.8.8.8, 8.8.4.4]
           dhcp4: false
@@ -60,10 +60,10 @@ resource "proxmox_virtual_environment_file" "router_network_data" {
         # LAN interface
         lan:
           match:
-            macaddress: ${var.mac-addresses.router-lan1}
+            macaddress: ${var.macaddresses.routerlan1}
           set-name: lan0
           addresses:
-            - ${var.ip-addresses.router-lan1}
+            - ${var.ipaddresses.routerlan1}
           dhcp4: false
           dhcp6: false
     EOF

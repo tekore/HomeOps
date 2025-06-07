@@ -32,7 +32,7 @@ module "router_virtual_machine" {
     id = var.pci-devices.router
   }
   network_bridge = "vmbr99"
-  mac_address = var.mac-addresses.router-lan1
+  mac_address = var.macaddresses.routerlan1
   user_data = proxmox_virtual_environment_file.router_user_data.id
   network_data = proxmox_virtual_environment_file.router_network_data.id
 }

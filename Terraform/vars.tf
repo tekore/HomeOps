@@ -1,45 +1,40 @@
 //main.tf
 variable "axis-access" {
-  type = map(string)
-  default = {
-   endpoint = ""
-    address = ""
-    port = ""
-    username = ""
-    password = ""
-  }
+  type = object({
+    endpoint = string
+    address = string
+    port = string
+    username = string
+    password = string
+  })
 }
 
-variable "mac-addresses" {
-  type = map(string)
-  default = {
-    router-wan = ""
-    router-lan1 = ""
-  }
+variable "macaddresses" {
+  type = object({
+    routerwan = string
+    routerlan1 = string
+  })
 }
 
-variable "ip-addresses" {
-  type = map(string)
-  default = {
-    gateway = ""
-    router-wan = ""
-    router-lan1 = ""
-  }
+variable "ipaddresses" {
+  type = object({
+    gateway = string
+    routerwan = string
+    routerlan1 = string
+  })
 }
 
 variable "pci-devices" {
-  type = map(string)
-  default = {
-    router = ""
-  }
+  type = object({
+    router = string
+  })
 }
 
-variable "cloud-init" {
-  type = map(string)
-  default = {
-    hostname = ""
-    timezone = ""
-    password-hash = ""
-    ssh-key = ""
-  }
+variable "cloudinit" {
+  type = object({
+    hostname = string
+    timezone = string
+    passwordhash = string
+    sshkey = string
+  })
 }
