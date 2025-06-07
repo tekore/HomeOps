@@ -6,22 +6,26 @@ resource "proxmox_virtual_environment_file" "router_user_data" {
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: test-ubuntu-fuk
-    timezone: America/Toronto
+    hostname: ${var.cloud-init.hostname}
+    timezone: ${var.cloud-init.timezone}
     users:
       - default
-      - name: ubuntu
+      - name: tekore
         groups:
           - sudo
         shell: /bin/bash
         sudo: ALL=(ALL) NOPASSWD:ALL
+        lock_passwd: false
+        passwd: ${var.cloud-init.password-hash}
+        ssh_authorized_keys:
+          - ${var.cloud-init.ssh-key}
     package_update: true
     packages:
-      - qemu-guest-agent
-      - net-tools
-      - curl
+      - ansible
+      - openssh-server
+      - vim
     runcmd:
-      - echo "done" > /tmp/cloud-config.done
+      - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-router.yml"
     EOF
 
     file_name = "router-user-data.yaml"
@@ -39,28 +43,27 @@ resource "proxmox_virtual_environment_file" "router_network_data" {
     network:
       version: 2
       ethernets:
-        # WAN interface (match by MAC address)
         wan:
           match:
-            macaddress: "80:61:5f:06:1b:40"
+            macaddress: {var.mac-addresses.router-wan}
           set-name: wan0
           addresses:
-            - 192.168.1.111/24  # Static IP for WAN
-          gateway4: 192.168.1.254  # WAN gateway
+            - ${var.ip-addresses.router-wan}
+          routes:
+          - to: default
+            via: ${var.ip-addresses.gateway}
           nameservers:
-            addresses:
-              - 8.8.8.8
-              - 8.8.4.4
+            addresses: [8.8.8.8, 8.8.4.4]
           dhcp4: false
           dhcp6: false
 
-        # LAN interface (match by MAC address)
+        # LAN interface
         lan:
           match:
-            macaddress: "a1:10:ce:34:ee:ff"
+            macaddress: ${var.mac-addresses.router-lan1}
           set-name: lan0
           addresses:
-            - 10.0.0.1/24  # Static IP for LAN
+            - ${var.ip-addresses.router-lan1}
           dhcp4: false
           dhcp6: false
     EOF

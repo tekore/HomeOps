@@ -29,10 +29,10 @@ module "router_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   host_pci_device =  {
     device = "hostpci1"
-    id = "03:00.0"
+    id = var.pci-devices.router
   }
   network_bridge = "vmbr99"
-  mac_address = "00:1a:2b:3c:4d:5e"
+  mac_address = var.mac-addresses.router-lan1
   user_data = proxmox_virtual_environment_file.router_user_data.id
   network_data = proxmox_virtual_environment_file.router_network_data.id
 }

@@ -7,8 +7,8 @@
   hosts: localhost
   vars:
     # Interfaces
-    wan_interface: "ens17"
-    lan_interface: "eth0"
+    wan_interface: "wan0"
+    lan_interface: "lan0"
 
     # Network settings
     lan_network: "10.10.1.0/24"
