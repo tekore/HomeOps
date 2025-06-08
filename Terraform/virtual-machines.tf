@@ -6,6 +6,7 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
   url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
+## Add protection flag once PROD is ready to be build
 // Axis Router Virtual Machine
 module "router_virtual_machine" {
   source = "./modules/proxmox-vm"  
@@ -39,7 +40,7 @@ module "bastion_virtual_machine" {
 
 // Test Virtual Machines
 module "test_virtual_machine" {
-  count = 55
+  count = 60
   source = "./modules/proxmox-vm"  
   vm_name     = "VM-${count.index + 1}"
   vm_tags     = ["Terraform", "Ubuntu", "VM${count.index + 1}"]
