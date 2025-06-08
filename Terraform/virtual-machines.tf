@@ -6,19 +6,6 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
   url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
-// Bastion Virtual Machine
-module "bastion_virtual_machine" {
-  source = "./modules/proxmox-vm"  
-  vm_name     = "Bastion"
-  vm_tags     = ["Terraform", "Ubuntu", "Bastion"]
-  node_name   = data.proxmox_virtual_environment_node.node.node_name
-  vm_id       = 1010
-  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-  network_bridge = "vmbr99"
-  user_data = proxmox_virtual_environment_file.generic_user_data.id
-  network_data = proxmox_virtual_environment_file.generic_network_data.id
-}
-
 // Axis Router Virtual Machine
 module "router_virtual_machine" {
   source = "./modules/proxmox-vm"  
@@ -35,4 +22,31 @@ module "router_virtual_machine" {
   mac_address = var.macaddresses.routerlan1
   user_data = proxmox_virtual_environment_file.router_user_data.id
   network_data = proxmox_virtual_environment_file.router_network_data.id
+}
+
+// Bastion Virtual Machine
+module "bastion_virtual_machine" {
+  source = "./modules/proxmox-vm"  
+  vm_name     = "Bastion"
+  vm_tags     = ["Terraform", "Ubuntu", "Bastion"]
+  node_name   = data.proxmox_virtual_environment_node.node.node_name
+  vm_id       = 1010
+  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+  network_bridge = "vmbr99"
+  user_data = proxmox_virtual_environment_file.generic_user_data.id
+  network_data = proxmox_virtual_environment_file.generic_network_data.id
+}
+
+// Test Virtual Machines
+module "test_virtual_machine" {
+  count = 55
+  source = "./modules/proxmox-vm"  
+  vm_name     = "VM-${count.index + 1}"
+  vm_tags     = ["Terraform", "Ubuntu", "VM${count.index + 1}"]
+  node_name   = data.proxmox_virtual_environment_node.node.node_name
+  vm_id       = 200 + count.index
+  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+  network_bridge = "vmbr99"
+  user_data = proxmox_virtual_environment_file.generic_user_data.id
+  network_data = proxmox_virtual_environment_file.generic_network_data.id
 }
