@@ -49,7 +49,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
 
   network_device {
     bridge = var.network_bridge
-    mac_address = var.mac_address
+    mac_address = var.mac_address != null ? var.mac_address : null
   }
 
   initialization {

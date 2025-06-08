@@ -120,7 +120,7 @@ variable "network_bridge" {
 variable "mac_address" {
   description = "Mac address for the LAN interface"
   type        = string
-  default     = "a1:10:ce:34:ee:ff"
+  default = null
 }
 
 variable "os_type" {

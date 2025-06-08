@@ -19,8 +19,10 @@ variable "macaddresses" {
 variable "ipaddresses" {
   type = object({
     gateway = string
+    internalgateway = string
     routerwan = string
     routerlan1 = string
+    bastion = string
   })
 }
 
@@ -32,7 +34,6 @@ variable "pci-devices" {
 
 variable "cloudinit" {
   type = object({
-    hostname = string
     timezone = string
     passwordhash = string
     sshkey = string
