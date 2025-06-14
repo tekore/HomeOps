@@ -9,7 +9,7 @@ To automate the installation and configuration of my home infrastructure. This i
 - [Auto-Install](https://github.com/tekore/HomeOps/tree/main/Auto-Install)
 - [Ansible](https://github.com/tekore/HomeOps/tree/main/Ansible)
 - [Terraform](https://github.com/tekore/HomeOps/tree/main/Terraform)
-
+- [Kubernetes](https://github.com/tekore/HomeOps/tree/main/Kubernetes)
 ## Automation Overview
 ```mermaid
 flowchart TD

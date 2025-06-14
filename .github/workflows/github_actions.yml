@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-      
+
       - name: Install AWS CLI
         run: |
           if ! command -v aws &> /dev/null; then
@@ -28,7 +28,7 @@ jobs:
           else
             echo "AWS CLI already installed"
           fi
-      
+
       - name: Download Variables
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
@@ -51,4 +51,4 @@ jobs:
 
       - name: Terraform Apply (Main Branch Only)
         if: github.ref_name == 'main'
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -parallelism=1 -auto-approve tfplan

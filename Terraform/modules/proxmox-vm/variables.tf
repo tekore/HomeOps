@@ -61,13 +61,13 @@ variable "startup_order" {
 variable "startup_up_delay" {
   description = "Delay before starting VM"
   type        = string
-  default     = "10"
+  default     = "1"
 }
 
 variable "startup_down_delay" {
   description = "Delay before stopping VM"
   type        = string
-  default     = "10"
+  default     = "1"
 }
 
 variable "cpu_cores" {
@@ -91,7 +91,7 @@ variable "memory_dedicated" {
 variable "memory_floating" {
   description = "Floating RAM in MB (for balooning)"
   type        = number
-  default     = 2048
+  default     = 0
 }
 
 variable "datastore_id" {
@@ -109,6 +109,12 @@ variable "disk_interface" {
   description = "Disk interface type"
   type        = string
   default     = "scsi0"
+}
+
+variable "disk_size" {
+  description = "Disk size"
+  type        = string
+  default     = "10"
 }
 
 variable "network_bridge" {

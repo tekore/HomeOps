@@ -31,6 +31,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
     datastore_id = var.datastore_id
     file_id      = var.disk_file_id
     interface    = var.disk_interface
+    size         = var.disk_size
   }
 
   dynamic "hostpci" {
