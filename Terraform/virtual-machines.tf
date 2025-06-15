@@ -26,6 +26,7 @@ module "router_virtual_machine" {
   mac_address = var.macaddresses.routerlan1
   user_data = proxmox_virtual_environment_file.router_user_data.id
   network_data = proxmox_virtual_environment_file.router_network_data.id
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
 // Bastion Virtual Machine
@@ -43,6 +44,7 @@ module "bastion_virtual_machine" {
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.generic_user_data.id
   network_data = proxmox_virtual_environment_file.generic_network_data.id
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
 // Kubernetes Virtual Machines (Production)
@@ -61,6 +63,7 @@ module "kubernetes_production_virtual_machine" {
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.generic_user_data.id
   network_data = proxmox_virtual_environment_file.generic_network_data.id
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
 // Kubernetes Virtual Machines (Test)
@@ -79,4 +82,5 @@ module "kubernetes_test_virtual_machine" {
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.generic_user_data.id
   network_data = proxmox_virtual_environment_file.generic_network_data.id
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
