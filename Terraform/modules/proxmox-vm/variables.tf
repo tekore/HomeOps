@@ -91,7 +91,7 @@ variable "memory_dedicated" {
 variable "memory_floating" {
   description = "Floating RAM in MB (for balooning)"
   type        = number
-  default     = 0
+  default     = 2048
 }
 
 variable "datastore_id" {

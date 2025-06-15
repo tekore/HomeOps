@@ -115,3 +115,13 @@
           -e GITHUB_PAT="{{ github_pat }}" \
           ghcr.io/actions/actions-runner:latest \
           /entrypoint.sh
+      
+    - name: Run CloudFlare Tunnel docker container
+      become: true
+      become_user: runner
+      shell: |
+        docker run -d \
+          --name cloudflare-tunnel \
+          --restart always \
+          cloudflare/cloudflared:latest \
+          tunnel --no-autoupdate run --token "{{ cloudflare_tunnel_token }}"
