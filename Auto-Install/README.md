@@ -8,9 +8,11 @@
 - A Linux host you can use to create the bootable USB (Commands may vary slightly if you're not using Ubuntu 24.04)
 
 ## How-To
-1. Add the repo for the 'proxmox-auto-install-assistant' tool (if applicable)
+1. Add the repo and GPG key for the 'proxmox-auto-install-assistant' tool and update the package list
 ```sh
 echo "deb [arch=amd64] http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-install-repo.list
+wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+apt update
 ```
 
 2. Install the package 'proxmox-auto-install-assistant'
