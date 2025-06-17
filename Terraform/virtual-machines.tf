@@ -63,6 +63,7 @@ module "bastion_virtual_machine" {
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.generic_user_data.id
   ip_address = "10.10.1.111"
+  gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
@@ -81,7 +82,8 @@ module "kubernetes_production_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "10.10.1.10${count.index + 1}"
+  ip_address = "10.10.1.${100 + count.index}"
+  gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
@@ -100,6 +102,7 @@ module "kubernetes_test_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "10.10.1.10${count.index + 1}"
+  ip_address = "10.10.1.${200 + count.index}"
+  gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }

@@ -149,3 +149,8 @@ variable "ip_address" {
   description = "IP address for cloudinit"
   type        = string
 }
+
+variable "gateway"{
+  description = "Gateway for cloud init"
+  type = string
+}
