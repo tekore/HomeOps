@@ -56,12 +56,12 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   initialization {
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = var.ipaddress
       }
     }
     datastore_id = var.datastore_id
     user_data_file_id = var.user_data
-    network_data_file_id = var.network_data
+    #network_data_file_id = var.network_data
   }
 
   operating_system {

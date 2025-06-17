@@ -140,7 +140,12 @@ variable "user_data" {
   type        = string
 }
 
-variable "network_data" {
-  description = "network_data file for cloudinit"
+#variable "network_data" {
+#  description = "network_data file for cloudinit"
+#  type        = string
+#}
+
+variable "ip_address" {
+  description = "IP address for cloudinit"
   type        = string
 }
