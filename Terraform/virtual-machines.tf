@@ -61,8 +61,8 @@ module "kubernetes_production_virtual_machine" {
   vm_id       = 200 + count.index
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
-  user_data = proxmox_virtual_environment_file.generic_user_data.id
-  network_data = proxmox_virtual_environment_file.generic_network_data.id
+  user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
+  network_data = proxmox_virtual_environment_file.kubernetes_network_data.id
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
@@ -80,7 +80,7 @@ module "kubernetes_test_virtual_machine" {
   vm_id       = 210 + count.index
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
-  user_data = proxmox_virtual_environment_file.generic_user_data.id
-  network_data = proxmox_virtual_environment_file.generic_network_data.id
+  user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
+  network_data = proxmox_virtual_environment_file.kubernetes_network_data.id
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }

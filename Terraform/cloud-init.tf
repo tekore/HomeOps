@@ -130,3 +130,62 @@ resource "proxmox_virtual_environment_file" "generic_network_data" {
     file_name = "generic-network-data.yaml"
   }
 }
+
+resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = data.proxmox_virtual_environment_node.node.node_name
+
+  source_raw {
+    data = <<-EOF
+    #cloud-config
+    hostname: Kubernetes-Node
+    timezone: ${var.cloudinit.timezone}
+    users:
+      - default
+      - name: tekore
+        groups:
+          - sudo
+        shell: /bin/bash
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        lock_passwd: false
+        passwd: ${var.cloudinit.passwordhash}
+        ssh_authorized_keys:
+          - ${var.cloudinit.sshkey}
+    package_update: true
+    packages:
+      - ansible
+      - openssh-server
+      - vim
+    EOF
+
+    file_name = "kubernetes-user-data.yaml"
+  }
+}
+
+resource "proxmox_virtual_environment_file" "kubernetes_network_data" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = data.proxmox_virtual_environment_node.node.node_name
+
+  source_raw {
+    data = <<-EOF
+    #cloud-config
+    network:
+      version: 2
+      ethernets:
+        ens18:
+          addresses:
+            - ${var.ipaddresses.bastion}
+          routes:
+          - to: default
+            via: ${var.ipaddresses.internalgateway}
+          nameservers:
+            addresses: [8.8.8.8, 8.8.4.4]
+          dhcp4: false
+          dhcp6: false
+    EOF
+
+    file_name = "kubernetes-network-data.yaml"
+  }
+}
