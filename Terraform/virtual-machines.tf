@@ -11,7 +11,7 @@ resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
   name        = "AxisRouter"
   description = "Managed by Terraform"
   tags        = ["Terraform"]
-  node_name = "Axis"
+  node_name = data.proxmox_virtual_environment_node.node.node_name
   vm_id     = 9000
   agent { enabled = false }
   stop_on_destroy = true
@@ -62,7 +62,7 @@ module "bastion_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.generic_user_data.id
-  ip_address = "10.10.1.111"
+  ip_address = "10.10.1.111/24"
   gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
@@ -82,7 +82,7 @@ module "kubernetes_production_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "10.10.1.${100 + count.index}"
+  ip_address = "10.10.1.${100 + count.index}/24"
   gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
@@ -102,7 +102,7 @@ module "kubernetes_test_virtual_machine" {
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr99"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "10.10.1.${200 + count.index}"
+  ip_address = "10.10.1.${200 + count.index}/24"
   gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
