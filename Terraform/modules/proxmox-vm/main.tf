@@ -56,7 +56,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   initialization {
     ip_config {
       ipv4 {
-        address = var.ipaddress
+        address = var.ip_address
       }
     }
     datastore_id = var.datastore_id

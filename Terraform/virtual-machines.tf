@@ -42,7 +42,7 @@ resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
     user_data_file_id = proxmox_virtual_environment_file.router_user_data.id
     network_data_file_id = proxmox_virtual_environment_file.router_network_data.id
   }
-  operating_system { type = var.os_type }
+  operating_system { type = "l26" }
   serial_device {}
   vga { type = "serial0" }
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
