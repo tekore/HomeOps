@@ -69,12 +69,12 @@ module "bastion_virtual_machine" {
 
 // Kubernetes Virtual Machines (Production)
 module "kubernetes_production_virtual_machine" {
-  count = 5
+  count = 3
   source = "./modules/proxmox-vm"
   vm_name     = "Kubernetes-prod-${count.index + 1}"
   cpu_cores = 2
-  memory_dedicated = 4096
-  memory_floating = 4096
+  memory_dedicated = 8192
+  memory_floating = 8192
   disk_size = 30
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-prod-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
@@ -93,8 +93,8 @@ module "kubernetes_test_virtual_machine" {
   source = "./modules/proxmox-vm"  
   vm_name     = "Kubernetes-test-${count.index + 1}"
   cpu_cores = 2
-  memory_dedicated = 4096
-  memory_floating = 4096
+  memory_dedicated = 8192
+  memory_floating = 8192
   disk_size = 30
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-test-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
