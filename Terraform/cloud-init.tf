@@ -100,6 +100,8 @@ resource "proxmox_virtual_environment_file" "generic_user_data" {
       - ansible
       - openssh-server
       - vim
+    runcmd:
+      - systemctl enable --now ssh
     EOF
 
     file_name = "generic-user-data.yaml"
@@ -160,6 +162,8 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - ansible
       - openssh-server
       - vim
+    runcmd:
+      - systemctl enable --now ssh
     EOF
 
     file_name = "kubernetes-user-data.yaml"
