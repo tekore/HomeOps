@@ -37,5 +37,6 @@ variable "cloudinit" {
     timezone = string
     passwordhash = string
     sshkey = string
+    sshkey2 = string
   })
 }
