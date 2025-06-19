@@ -163,6 +163,12 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - vim
     runcmd:
       - systemctl enable --now ssh
+    write_files:
+      - path: /etc/cloud/cloud-init.disable
+        content: |
+          # File to disable cloud init on boot
+        owner: 'root:root'
+        permissions: '0644'
     EOF
 
     file_name = "kubernetes-user-data.yaml"
