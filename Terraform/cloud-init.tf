@@ -107,33 +107,6 @@ resource "proxmox_virtual_environment_file" "generic_user_data" {
   }
 }
 
-resource "proxmox_virtual_environment_file" "generic_network_data" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = data.proxmox_virtual_environment_node.node.node_name
-
-  source_raw {
-    data = <<-EOF
-    #cloud-config
-    network:
-      version: 2
-      ethernets:
-        ens18:
-          addresses:
-            - ${var.ipaddresses.bastion}
-          routes:
-          - to: default
-            via: ${var.ipaddresses.internalgateway}
-          nameservers:
-            addresses: [8.8.8.8, 8.8.4.4]
-          dhcp4: false
-          dhcp6: false
-    EOF
-
-    file_name = "generic-network-data.yaml"
-  }
-}
-
 resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
   content_type = "snippets"
   datastore_id = "local"
@@ -164,7 +137,7 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
     runcmd:
       - systemctl enable --now ssh
     write_files:
-      - path: /etc/cloud/cloud-init.disable
+      - path: /etc/cloud/cloud-init.disabled
         content: |
           # File to disable cloud init on boot
         owner: 'root:root'
@@ -172,32 +145,5 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
     EOF
 
     file_name = "kubernetes-user-data.yaml"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "kubernetes_network_data" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = data.proxmox_virtual_environment_node.node.node_name
-
-  source_raw {
-    data = <<-EOF
-    #cloud-config
-    network:
-      version: 2
-      ethernets:
-        ens18:
-          addresses:
-            - ${var.ipaddresses.bastion}
-          routes:
-          - to: default
-            via: ${var.ipaddresses.internalgateway}
-          nameservers:
-            addresses: [8.8.8.8, 8.8.4.4]
-          dhcp4: false
-          dhcp6: false
-    EOF
-
-    file_name = "kubernetes-network-data.yaml"
   }
 }
