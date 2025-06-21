@@ -9,6 +9,13 @@ variable "axis-access" {
   })
 }
 
+variable "passwords" {
+  type = object({
+    tekore = string
+    valraevn = string
+  })
+}
+
 variable "macaddresses" {
   type = object({
     routerwan = string
