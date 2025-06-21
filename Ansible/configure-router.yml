@@ -17,12 +17,11 @@
 
     # Port forwards
     port_forwards:
-      - { ext: "80", ip: "192.168.1.111", int: "80" }
       - { ext: "2022", ip: "10.10.1.111", int: "22" }
  
     # WAN services (gateway access from internet)
     wan_services:
-      - "22"
+      - "2222"
     blocked_ips:
       - "1.2.3.4"
       - "10.0.0.0/8"
