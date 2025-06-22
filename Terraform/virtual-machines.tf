@@ -20,8 +20,8 @@ resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
     type  = "x86-64-v2-AES"
   }
   memory {
-    dedicated = 2048
-    floating  = 2048
+    dedicated = 3072
+    floating  = 3072
   }
   disk {
     datastore_id = "local-zfs"
