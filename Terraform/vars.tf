@@ -7,6 +7,7 @@ variable "axis-access" {
     username = string
     password = string
   })
+  sensitive = true
 }
 
 variable "passwords" {
@@ -14,6 +15,7 @@ variable "passwords" {
     tekore = string
     valraevn = string
   })
+  sensitive = true
 }
 
 variable "macaddresses" {
@@ -45,5 +47,7 @@ variable "cloudinit" {
     passwordhash = string
     sshkey = string
     sshkey2 = string
+    desktopsoftware = string
   })
+  sensitive = true
 }

@@ -17,7 +17,7 @@
 
     # Port forwards
     port_forwards:
-      - { ext: "2022", ip: "10.10.1.111", int: "22" }
+      - { ext: "4000", ip: "10.10.1.111", int: "4000" }
  
     # WAN services (gateway access from internet)
     wan_services:

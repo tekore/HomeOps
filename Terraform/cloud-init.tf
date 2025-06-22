@@ -72,7 +72,7 @@ resource "proxmox_virtual_environment_file" "router_network_data" {
   }
 }
 
-resource "proxmox_virtual_environment_file" "generic_user_data" {
+resource "proxmox_virtual_environment_file" "desktop_user_data" {
   content_type = "snippets"
   datastore_id = "local"
   node_name    = data.proxmox_virtual_environment_node.node.node_name
@@ -80,7 +80,7 @@ resource "proxmox_virtual_environment_file" "generic_user_data" {
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: Bastion
+    hostname: AxisDesktop
     timezone: ${var.cloudinit.timezone}
     users:
       - default
@@ -99,11 +99,14 @@ resource "proxmox_virtual_environment_file" "generic_user_data" {
       - ansible
       - openssh-server
       - vim
+      - wget
+      - ubuntu-gnome-desktop
     runcmd:
-      - systemctl enable --now ssh
+      - wget ${var.cloudinit.desktopsoftware}
+      - dpkg -i *enterprise-desktop_9.0*.deb
     EOF
 
-    file_name = "generic-user-data.yaml"
+    file_name = "desktop-user-data.yaml"
   }
 }
 
