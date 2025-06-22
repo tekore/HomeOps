@@ -1,5 +1,5 @@
 ---
-## all bogus values for now for testing
+## Updated router configuration with proper NAT handling
 - name: Configure Ubuntu Router with UFW
   connection: local
   become: true
@@ -14,6 +14,7 @@
     lan_network: "10.10.1.0/24"
     lan_subnet: "10.10.1.0/24"
     gateway_ip: "192.168.1.254"
+    router_ip: "192.168.1.111"  # Your router's WAN IP
 
     # Port forwards
     port_forwards:
@@ -101,8 +102,21 @@
       ufw:
         rule: allow
         route: yes
+        interface_in: "{{ wan_interface }}"
+        interface_out: "{{ lan_interface }}"
         to_ip: "{{ item.ip }}"
         to_port: "{{ item.int }}"
+        proto: tcp
+      loop: "{{ port_forwards }}"
+
+    - name: Allow port forwards - routing from internal IPs (return traffic)
+      ufw:
+        rule: allow
+        route: yes
+        interface_in: "{{ lan_interface }}"
+        interface_out: "{{ wan_interface }}"
+        from_ip: "{{ item.ip }}"
+        from_port: "{{ item.int }}"
         proto: tcp
       loop: "{{ port_forwards }}"
 
@@ -119,22 +133,52 @@
         block: |
           # NAT table rules for router functionality
           *nat
+          :PREROUTING ACCEPT [0:0]
           :POSTROUTING ACCEPT [0:0]
           
           # Forward traffic from LAN to WAN with masquerading
           -A POSTROUTING -s {{ lan_subnet }} -o {{ wan_interface }} -j MASQUERADE
           
-          # Port forwarding rules
+          # Port forwarding DNAT rules
           {% for forward in port_forwards %}
           -A PREROUTING -i {{ wan_interface }} -p tcp --dport {{ forward.ext }} -j DNAT --to-destination {{ forward.ip }}:{{ forward.int }}
+          {% endfor %}
+          
+          # SNAT/Masquerade for port forwarded traffic (critical for proper NAT)
+          {% for forward in port_forwards %}
+          -A POSTROUTING -d {{ forward.ip }} -p tcp --dport {{ forward.int }} -j SNAT --to-source {{ router_ip }}
           {% endfor %}
           
           COMMIT
         marker: "# {mark} ANSIBLE MANAGED NAT RULES"
 
+    - name: Configure UFW for additional filtering rules
+      blockinfile:
+        path: /etc/ufw/before.rules
+        insertafter: "# End required lines"
+        block: |
+          # Additional filter rules for port forwarding
+          {% for forward in port_forwards %}
+          # Allow established and related connections for port {{ forward.ext }}
+          -A ufw-before-forward -i {{ wan_interface }} -o {{ lan_interface }} -p tcp --dport {{ forward.int }} -d {{ forward.ip }} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+          -A ufw-before-forward -i {{ lan_interface }} -o {{ wan_interface }} -p tcp --sport {{ forward.int }} -s {{ forward.ip }} -m state --state ESTABLISHED,RELATED -j ACCEPT
+          {% endfor %}
+        marker: "# {mark} ANSIBLE MANAGED FORWARD RULES"
+
+    - name: Ensure UFW allows connection tracking
+      lineinfile:
+        path: /etc/ufw/before.rules
+        insertafter: "# allow all on loopback"
+        line: "# Allow connection tracking for NAT"
+
     - name: Enable UFW
       ufw:
         state: enabled
+
+    - name: Reload UFW after configuration changes
+      systemd:
+        name: ufw
+        state: reloaded
 
     - name: Show UFW status
       command: ufw status verbose
@@ -144,10 +188,29 @@
       debug:
         msg: "{{ ufw_status.stdout_lines }}"
 
-    - name: Show current iptables rules (for verification)
-      command: iptables -L -n -v
-      register: current_rules
+    - name: Show NAT table rules
+      command: iptables -t nat -L -n -v
+      register: nat_rules
 
-    - name: Display active firewall rules
+    - name: Display NAT rules
       debug:
-        msg: "{{ current_rules.stdout_lines }}"
+        msg: "{{ nat_rules.stdout_lines }}"
+
+    - name: Show FORWARD chain rules
+      command: iptables -L FORWARD -n -v
+      register: forward_rules
+
+    - name: Display FORWARD rules
+      debug:
+        msg: "{{ forward_rules.stdout_lines }}"
+
+    - name: Test port forwarding connectivity
+      command: "ss -tlnp | grep :{{ item.int }}"
+      register: port_check
+      loop: "{{ port_forwards }}"
+      ignore_errors: yes
+
+    - name: Display port listening status
+      debug:
+        msg: "Port {{ item.item.int }} on {{ item.item.ip }}: {{ item.stdout if item.stdout else 'Not listening or not accessible' }}"
+      loop: "{{ port_check.results }}"
