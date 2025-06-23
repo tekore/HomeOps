@@ -111,7 +111,7 @@ resource "proxmox_virtual_environment_file" "desktop_user_data" {
       - ubuntu-gnome-desktop
     runcmd:
       - wget ${var.cloudinit.desktopsoftware}
-      - dpkg -i *enterprise-desktop_9.0*.deb
+      - dpkg -i *terminal-server_9.0*.deb
       - snap install code --classic
       - snap install snap-store
     EOF
