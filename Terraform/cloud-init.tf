@@ -94,16 +94,26 @@ resource "proxmox_virtual_environment_file" "desktop_user_data" {
         ssh_authorized_keys:
           - ${var.cloudinit.sshkey}
           - ${var.cloudinit.sshkey2}
+      - name: valraevn
+        groups:
+          - sudo
+        shell: /bin/bash
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        lock_passwd: false
+        passwd: ${var.cloudinit.valraevnpasswordhash}
     package_update: true
     packages:
       - ansible
       - openssh-server
       - vim
       - wget
+      - snapd
       - ubuntu-gnome-desktop
     runcmd:
       - wget ${var.cloudinit.desktopsoftware}
       - dpkg -i *enterprise-desktop_9.0*.deb
+      - snap install code --classic
+      - snap install snap-store
     EOF
 
     file_name = "desktop-user-data.yaml"

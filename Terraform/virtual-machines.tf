@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
 resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
   name        = "AxisRouter"
   description = "Managed by Terraform"
-  tags        = ["Terraform", "Ubuntu"]
+  tags        = ["terraform", "ubuntu"]
   node_name = data.proxmox_virtual_environment_node.node.node_name
   vm_id     = 9000
   agent { enabled = false }
@@ -49,7 +49,7 @@ resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
 }
 
 // Axis Remote Desktop Virtual Machine
-module "bastion_virtual_machine" {
+module "desktop_virtual_machine" {
   source = "./modules/proxmox-vm"  
   vm_name     = "AxisDesktop"
   cpu_cores = 8
@@ -60,10 +60,10 @@ module "bastion_virtual_machine" {
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 8999
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-  network_bridge = "vmbr99"
+  network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.desktop_user_data.id
-  ip_address = "10.10.1.111/24"
-  gateway = var.ipaddresses.internalgateway
+  ip_address = "192.168.1.101/24"
+  gateway = var.ipaddresses.gateway
   depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 

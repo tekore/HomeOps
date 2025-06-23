@@ -45,6 +45,7 @@ variable "cloudinit" {
   type = object({
     timezone = string
     passwordhash = string
+    valraevnpasswordhash = string
     sshkey = string
     sshkey2 = string
     desktopsoftware = string
