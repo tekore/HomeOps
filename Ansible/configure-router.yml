@@ -18,10 +18,9 @@
 
     # Port forwards
     port_forwards:
-      - { ext: "4000", ip: "10.10.1.111", int: "4443" }
-      - { ext: "443", ip: "10.10.1.111", int: "4443" }
-      - { ext: "80", ip: "10.10.1.111", int: "4443" }
-      - { ext: "2022", ip: "10.10.1.111", int: "22" }
+      - { ext: "4000", ip: "10.10.1.101", int: "4000" }
+      - { ext: "443", ip: "10.10.1.101", int: "4443" }
+      - { ext: "2022", ip: "10.10.1.200", int: "22" }
 
     # WAN services (gateway access from internet)
     wan_services:

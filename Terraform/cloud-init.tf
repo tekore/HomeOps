@@ -148,15 +148,15 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - ansible
       - openssh-server
       - vim
-    runcmd:
-      - systemctl enable --now ssh
-      - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-kubernetes-prerequisites.yml"
     write_files:
       - path: /etc/cloud/cloud-init.disabled
         content: |
           # File to disable cloud init on boot
         owner: 'root:root'
         permissions: '0644'
+    runcmd:
+      - systemctl enable --now ssh
+      - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-kubernetes-prerequisites.yml"
     EOF
 
     file_name = "kubernetes-user-data.yaml"
