@@ -69,9 +69,13 @@
         state: directory
       register: containerd_dir
 
+    - name: Generate default containerd config
+      shell: containerd config default
+      register: containerd_default_config
+
     - name: Generate containerd config with SystemdCgroup enabled
       copy:
-        content: "{{ containerd_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
+        content: "{{ containerd_default_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
         dest: /etc/containerd/config.toml
         backup: yes
       when: containerd_dir.changed

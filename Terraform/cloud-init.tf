@@ -20,6 +20,7 @@ resource "proxmox_virtual_environment_file" "router_user_data" {
         ssh_authorized_keys:
           - ${var.cloudinit.sshkey}
     package_update: true
+    package_upgrade: true
     packages:
       - ansible
       - openssh-server
@@ -102,6 +103,7 @@ resource "proxmox_virtual_environment_file" "desktop_user_data" {
         lock_passwd: false
         passwd: ${var.cloudinit.valraevnpasswordhash}
     package_update: true
+    package_upgrade: true
     packages:
       - ansible
       - openssh-server
@@ -144,6 +146,7 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
           - ${var.cloudinit.sshkey}
           - ${var.cloudinit.sshkey2}
     package_update: true
+    package_upgrade: true
     packages:
       - ansible
       - openssh-server
