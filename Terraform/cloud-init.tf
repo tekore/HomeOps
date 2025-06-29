@@ -114,6 +114,7 @@ resource "proxmox_virtual_environment_file" "desktop_user_data" {
       - dpkg -i *terminal-server_9.0*.deb
       - snap install code --classic
       - snap install snap-store
+      - systemctl daemon-reload
     EOF
 
     file_name = "desktop-user-data.yaml"
@@ -149,6 +150,7 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - vim
     runcmd:
       - systemctl enable --now ssh
+      - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-kubernetes-prerequisites.yml"
     write_files:
       - path: /etc/cloud/cloud-init.disabled
         content: |

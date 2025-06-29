@@ -1,0 +1,132 @@
+---
+- name: Configure Kubernetes
+  connection: local
+  become: true
+  become_user: root
+  hosts: localhost
+  vars:
+    hostname: "kubernetes-worker"
+  tasks:
+    - name: Set a hostname
+      ansible.builtin.hostname:
+        name: "{{ hostname }}"
+
+    - name: Install UFW
+      apt:
+        name: ufw
+        state: present
+        update_cache: yes
+
+    - name: Disable UFW
+      ufw:
+        state: disabled
+
+    - name: Disable swap
+      shell:
+        cmd: |
+          swapoff -a
+      args:
+        executable: /bin/bash
+
+    - name: Remove Swap from fstab
+      mount:
+        name: swap
+        fstype: swap
+        state: absent
+
+    - name: Let iptables see bridged traffic and disable IPv6
+      sysctl:
+        name: "{{ item }}"
+        value: "1"
+        state: present
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv6.conf.all.disable_ipv6
+        - net.ipv6.conf.default.disable_ipv6
+
+    - name: Add the overlay and br_netfilter modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - "overlay"
+        - "br_netfilter"
+
+    - name: Ensure containerd is installed.
+      apt:
+        name: containerd.io
+        state: present
+
+    - name: Ensure containerd is started and enabled at boot.
+      service:
+        name: containerd
+        state: started
+        enabled: true
+
+    - name: Ensure containerd config directory exists.
+      file:
+        path: /etc/containerd
+        state: directory
+      register: containerd_dir
+
+    - name: Generate containerd config with SystemdCgroup enabled
+      copy:
+        content: "{{ containerd_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
+        dest: /etc/containerd/config.toml
+        backup: yes
+      when: containerd_dir.changed
+
+    - name: Restart containerd
+      service:
+        name: containerd
+        state: restarted
+      when: containerd_dir.changed
+
+    - name: Install kubeadm dependancies
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg
+
+    - name: Add repo GPG key
+      ansible.builtin.apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key
+        keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        state: present
+
+    - name: Add needed repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+        filename: kubernetes
+        state: present
+        update_cache: true
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Hold Kubernetes packages
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Ensure kubelet is started and enabled at boot.
+      service:
+        name: kubelet
+        state: started
+        enabled: true
