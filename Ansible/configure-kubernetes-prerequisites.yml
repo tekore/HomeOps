@@ -54,7 +54,7 @@
 
     - name: Ensure containerd is installed.
       apt:
-        name: containerd.io
+        name: containerd
         state: present
 
     - name: Ensure containerd is started and enabled at boot.

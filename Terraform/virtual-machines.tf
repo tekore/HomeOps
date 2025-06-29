@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
 resource "proxmox_virtual_environment_vm" "router_virtual_machine" {
   name        = "AxisRouter"
   description = "Managed by Terraform"
-  tags        = ["terraform", "ubuntu"]
+  tags        = ["Terraform", "Ubuntu"]
   node_name = data.proxmox_virtual_environment_node.node.node_name
   vm_id     = 9000
   agent { enabled = false }
