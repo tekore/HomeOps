@@ -16,10 +16,9 @@ filter.INTERFACE = "eno1"
 
 [disk-setup]
 filesystem = "zfs"
-zfs.raid = "raid1"
-filter.DEVNAME = "/dev/sd*"
+zfs.raid = "raid0"
+filter.DEVNAME = "/dev/nvm*"
 
 [first-boot]
-source = "from-url"
+source = "from-iso"
 ordering = "fully-up"
-url = "https://raw.githubusercontent.com/tekore/HomeOps/refs/heads/main/Auto-Install/first-boot-script.sh"

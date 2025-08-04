@@ -13,36 +13,10 @@ PASSWORD="Changeme123"
 SSH_KEY_PATH="/root/.ssh/id_rsa.pub"
 ANSIBLE_REPO_URL="https://github.com/tekore/HomeOps.git"
 ANSIBLE_REPO_PLAYBOOK="Ansible/configure-runner.yml"
-
-# === Search for the required USB drive/file ===
-echo "🔎 Searching for USB drive.."
-found_usb=0
-yaml_data=""
-
-for DEV in /dev/sd?; do
-  if [[ ! -b $DEV ]]; then
-    continue
-  fi
-  if udevadm info --query=property --name="$DEV" | grep -q "ID_BUS=usb"; then
-    found_usb=1
-    echo "✅ Found USB drive $DEV"
-    mount $DEV /mnt
-    for yaml_file in /mnt/*.yml; do
-      if [[ -f "$yaml_file" ]]; then
-        echo "✅ Found YAML file: $yaml_file"
-        while IFS= read -r line; do
-          yaml_data+=$'\n        '
-          yaml_data+="$line"
-        done < "$yaml_file"
-      fi
-    done
-  fi
-done
-
-if [[ $found_usb -eq 0 ]]; then
-  echo "❌ No USB drives detected!"
-  exit 1
-fi
+GITHUB_REPO_URL="https://github.com/tekore/HomeOps"
+GITHUB_RUNNER_NAME="Axis-Runner"
+GITHUB_PAT="github_pat_124325431DFRGDRLKMNNiissNOTREAL"
+CLOUDFLARE_TUNNEL_TOKEN="eyWFFWJhFJWJWJBAUVUUOIjNOTREAL"
 
 # === Create the cloud-init file ===
 mkdir -p "/var/lib/vz/snippets"
@@ -51,7 +25,12 @@ cat > "/var/lib/vz/snippets/cloudinit.yml" <<EOF
 write_files:
   - path: /tmp/runner_secrets.yml
     content: |
-        $yaml_data
+        ---
+        # GitHub Runner Secrets
+        github_repo_url: $GITHUB_REPO_URL
+        github_runner_name: $GITHUB_RUNNER_NAME
+        github_pat: $GITHUB_PAT
+        cloudflare_tunnel_token: $CLOUDFLARE_TUNNEL_TOKEN
     owner: 'root:root'
     permissions: '0644'
 ssh_pwauth: true
