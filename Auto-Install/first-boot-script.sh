@@ -3,6 +3,8 @@
 set -e
 
 # === Variables ===
+NODE_NAME="axis"
+VLAN="123"
 VM_ID=$((100 + RANDOM % 899))
 VM_NAME="GitHub-Runner"
 BRIDGE="vmbr0"
@@ -17,6 +19,15 @@ GITHUB_REPO_URL="https://github.com/tekore/HomeOps"
 GITHUB_RUNNER_NAME="Axis-Runner"
 GITHUB_PAT="github_pat_124325431DFRGDRLKMNNiissNOTREAL"
 CLOUDFLARE_TUNNEL_TOKEN="eyWFFWJhFJWJWJBAUVUUOIjNOTREAL"
+
+# === Create VLAN interface ===
+pvesh create /nodes/$NODE_NAME/network -iface eno1.$VLAN -type vlan -vlan-id $VLAN
+
+# === Assign VLAN to the default interface
+pvesh set /nodes/$NODE_NAME/network/vmbr0 -type bridge -bridge_ports eno1.$VLAN -bridge_vlan_aware yes -bridge_vids $VLAN
+
+# === Apply network settings
+pvesh set /nodes/$NODE_NAME/network
 
 # === Create the cloud-init file ===
 mkdir -p "/var/lib/vz/snippets"
