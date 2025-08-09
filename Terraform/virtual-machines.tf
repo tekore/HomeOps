@@ -43,8 +43,8 @@ module "kubernetes_production_virtual_machine" {
   vlan_id = "200"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.100.${110 + count.index}/24"
-  gateway = var.ipaddresses.internalgateway
-  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
+  gateway = var.ipaddresses.gateway
+  #depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
 
 // Kubernetes Virtual Machines (Test)
@@ -64,6 +64,6 @@ module "kubernetes_test_virtual_machine" {
   vlan_id = "200"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.100.${120 + count.index}/24"
-  gateway = var.ipaddresses.internalgateway
-  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
+  gateway = var.ipaddresses.gateway
+  #depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
 }
