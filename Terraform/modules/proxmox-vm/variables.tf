@@ -129,6 +129,12 @@ variable "mac_address" {
   default = null
 }
 
+variable "vlan_id" {
+  description = "VLAN to assign the interface to"
+  type = string
+  default = null
+}
+
 variable "os_type" {
   description = "OS type"
   type        = string
@@ -139,11 +145,6 @@ variable "user_data" {
   description = "user_data file for cloudinit"
   type        = string
 }
-
-#variable "network_data" {
-#  description = "network_data file for cloudinit"
-#  type        = string
-#}
 
 variable "ip_address" {
   description = "IP address for cloudinit"

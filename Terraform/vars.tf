@@ -18,19 +18,9 @@ variable "passwords" {
   sensitive = true
 }
 
-variable "macaddresses" {
-  type = object({
-    routerwan = string
-    routerlan1 = string
-  })
-}
-
 variable "ipaddresses" {
   type = object({
     gateway = string
-    internalgateway = string
-    routerwan = string
-    routerlan1 = string
     bastion = string
   })
 }

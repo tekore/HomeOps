@@ -1,6 +1,8 @@
 name: Onprem Infrastructure
 run-name: Terraform Build
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 jobs:
   Terraform:
     name: Run Terraform
