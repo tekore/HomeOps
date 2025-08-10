@@ -6,6 +6,17 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
   url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
+resource "proxmox_virtual_environment_hardware_mapping_usb" "unraid" {
+  comment = "Unraid USB mapping"
+  name    = "unraid"
+  map = [
+    {
+      id      = "058f:6387"
+      node    = data.proxmox_virtual_environment_node.node.node_name
+    },
+  ]
+}
+
 // Unraid
 module "unraid_virtual_machine" {
   source = "./modules/proxmox-vm"  
@@ -13,7 +24,7 @@ module "unraid_virtual_machine" {
   cpu_cores = 4
   memory_dedicated = 8192
   memory_floating = 8192
-  usb = "058f:6387"
+  usb = proxmox_virtual_environment_hardware_mapping_usb.unraid.name
   vm_tags     = ["Terraform", "Uraid"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 9000
