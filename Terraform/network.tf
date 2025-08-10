@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_network_linux_bridge" "vmbr101" {
   node_name = data.proxmox_virtual_environment_node.node.node_name
   name      = "vmbr101"
   address = "192.168.101.100/24"
-  gateway = "192.168.101.1"
+  #gateway = "192.168.101.1"
   vlan_aware = true
   ports = [ proxmox_virtual_environment_network_linux_vlan.vlan101.name ]
   depends_on = [ proxmox_virtual_environment_network_linux_vlan.vlan101 ]
