@@ -40,8 +40,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   dynamic "usb" {
     for_each = var.usb != null ? [var.usb] : []
     content {
-      host = var.node_name
-      mapping = var.usb
+      host = var.usb
     }
   }
 

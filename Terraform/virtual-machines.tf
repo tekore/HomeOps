@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_24_noble_qco
 module "unraid_virtual_machine" {
   source = "./modules/proxmox-vm"  
   vm_name     = "Unraid"
-  cpu_cores = 8
+  cpu_cores = 4
   memory_dedicated = 8192
   memory_floating = 8192
   usb = "058f:6387"
