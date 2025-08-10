@@ -19,7 +19,6 @@ module "desktop_virtual_machine" {
   vm_id       = 8999
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr0"
-  vlan_id = "100"
   user_data = proxmox_virtual_environment_file.desktop_user_data.id
   ip_address = "192.168.100.101/24"
   gateway = var.ipaddresses.gateway
@@ -39,12 +38,11 @@ module "kubernetes_production_virtual_machine" {
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 200 + count.index
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-  network_bridge = "vmbr0"
-  vlan_id = "200"
+  network_bridge = "vmbr101"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "192.168.100.${110 + count.index}/24"
-  gateway = var.ipaddresses.gateway
-  #depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
+  ip_address = "192.168.101.${110 + count.index}/24"
+  gateway = "192.168.101.1"
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr101 ]
 }
 
 // Kubernetes Virtual Machines (Test)
@@ -60,10 +58,9 @@ module "kubernetes_test_virtual_machine" {
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 210 + count.index
   disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-  network_bridge = "vmbr0"
-  vlan_id = "200"
+  network_bridge = "vmbr101"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "192.168.100.${120 + count.index}/24"
-  gateway = var.ipaddresses.gateway
-  #depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr99 ]
+  ip_address = "192.168.101.${120 + count.index}/24"
+  gateway = "192.168.101.1"
+  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr101 ]
 }
