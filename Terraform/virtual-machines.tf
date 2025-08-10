@@ -27,7 +27,7 @@ module "desktop_virtual_machine" {
 
 // Kubernetes Virtual Machines (Production)
 module "kubernetes_production_virtual_machine" {
-  count = 3
+  count = 0
   source = "./modules/proxmox-vm"
   vm_name     = "Kubernetes-prod-${count.index + 1}"
   cpu_cores = 2
@@ -47,7 +47,7 @@ module "kubernetes_production_virtual_machine" {
 
 // Kubernetes Virtual Machines (Test)
 module "kubernetes_test_virtual_machine" {
-  count = 3
+  count = 0
   source = "./modules/proxmox-vm"  
   vm_name     = "Kubernetes-test-${count.index + 1}"
   cpu_cores = 2
