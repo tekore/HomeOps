@@ -115,7 +115,7 @@ variable "disk_interface" {
 variable "disk_size" {
   description = "Disk size"
   type        = string
-  default     = "10"
+  default     = null
 }
 
 variable "usb" {

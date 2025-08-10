@@ -28,7 +28,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   }
 
   dynamic "disk" {
-    for_each = var.disk_size ? [1] : []
+    for_each = var.disk_size != null ? [var.disk_size] : []
     content {
       datastore_id = var.datastore_id
       file_id      = var.disk_file_id != null ? var.disk_file_id : null
@@ -38,7 +38,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   }
 
   dynamic "usb" {
-    for_each = var.usb ? [1] : []
+    for_each = var.usb != null ? [var.usb] : []
     content {
       host = var.host
       mapping = var.usb_map
