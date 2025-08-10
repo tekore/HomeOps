@@ -25,6 +25,12 @@ variable "vm_id" {
   type        = number
 }
 
+variable "boot_order" {
+  description = "Set a specific boot order"
+  type        = list
+  default = []
+}
+
 variable "host_pci_device" {
   description = "PCI device"
   type = object({

@@ -4,7 +4,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   tags        = var.vm_tags
   node_name = var.node_name
   vm_id     = var.vm_id
-
+  boot_order = var.boot_order
   agent {
     enabled = var.agent_enabled
   }
