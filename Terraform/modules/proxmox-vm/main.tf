@@ -27,11 +27,22 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
     floating  = var.memory_floating
   }
 
-  disk {
-    datastore_id = var.datastore_id
-    file_id      = var.disk_file_id
-    interface    = var.disk_interface
-    size         = var.disk_size
+  dynamic "disk" {
+    for_each = var.disk_size ? [1] : []
+    content {
+      datastore_id = var.datastore_id
+      file_id      = var.disk_file_id != null ? var.disk_file_id : null
+      interface    = var.disk_interface
+      size         = var.disk_size != null ? var.disk_size : null
+    }
+  }
+
+  dynamic "usb" {
+    for_each = var.usb ? [1] : []
+    content {
+      host = var.host
+      mapping = var.usb_map
+    }
   }
 
   dynamic "hostpci" {

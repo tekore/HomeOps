@@ -103,6 +103,7 @@ variable "datastore_id" {
 variable "disk_file_id" {
   description = "File ID for disk"
   type        = string
+  default     = null
 }
 
 variable "disk_interface" {
@@ -115,6 +116,12 @@ variable "disk_size" {
   description = "Disk size"
   type        = string
   default     = "10"
+}
+
+variable "usb" {
+  description = "USB Map"
+  type        = string
+  default     = null
 }
 
 variable "network_bridge" {
@@ -144,6 +151,7 @@ variable "os_type" {
 variable "user_data" {
   description = "user_data file for cloudinit"
   type        = string
+  default     = null
 }
 
 variable "ip_address" {
