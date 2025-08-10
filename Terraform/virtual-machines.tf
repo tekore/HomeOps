@@ -24,7 +24,7 @@ module "unraid_virtual_machine" {
   cpu_cores = 4
   memory_dedicated = 8192
   memory_floating = 8192
-  boot_order = ["usb"]
+  boot_order = ["usb0"]
   usb = proxmox_virtual_environment_hardware_mapping_usb.unraid.name
   vm_tags     = ["Terraform", "Uraid"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
