@@ -31,7 +31,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   dynamic "disk" {
     for_each = var.disks
     content {
-      datastore_id      = var.datastore_id
+      datastore_id      = disk.value.datastore_id != null ? disk.value.datastore_id : var.datastore_id
       file_id           = disk.value.file_id != null ? disk.value.file_id : null
       interface         = disk.value.interface != null ? disk.value.interface : null
       size              = disk.value.size != null ? disk.value.size : null

@@ -28,10 +28,12 @@ module "unraid_virtual_machine" {
   usb = proxmox_virtual_environment_hardware_mapping_usb.unraid.name
   disks = [
     {
+      datastore_id = ""
       path_in_datastore  = "/dev/sda"
       file_format = "raw"
     },
     {
+      datastore_id = ""
       path_in_datastore  = "/dev/sdb"
       file_format = "raw"
     },

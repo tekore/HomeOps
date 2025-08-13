@@ -109,6 +109,7 @@ variable "datastore_id" {
 variable "disks" {
   description = "List of disk configurations"
   type = list(object({
+    datastore_id      = optional(string,)
     file_id           = optional(string)
     interface         = optional(string, "scsi0")
     size              = optional(string)
