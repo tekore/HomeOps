@@ -111,7 +111,7 @@ variable "disks" {
   type = list(object({
     datastore_id      = optional(string,)
     file_id           = optional(string)
-    interface         = optional(string, "scsi")
+    interface         = optional(string, "scsi0")
     size              = optional(string)
     path_in_datastore = optional(string)
     file_format       = optional(string, "raw")
