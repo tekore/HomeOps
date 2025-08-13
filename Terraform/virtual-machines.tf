@@ -29,15 +29,17 @@ module "unraid_virtual_machine" {
   disks = [
     {
       datastore_id = ""
-      interface = "scsi"
+      interface = "scsi0"
       path_in_datastore  = "/dev/sda"
       file_format = "raw"
+      size = 447
     },
     {
       datastore_id = ""
-      interface = "scsi"
+      interface = "scsi1"
       path_in_datastore  = "/dev/sdb"
       file_format = "raw"
+      size = 447
     },
   ]
   vm_tags     = ["Terraform", "Uraid"]
