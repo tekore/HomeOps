@@ -29,13 +29,13 @@ module "unraid_virtual_machine" {
   disks = [
     {
       datastore_id = ""
-      interface = "sata1"
+      interface = null
       path_in_datastore  = "/dev/sda"
       file_format = "raw"
     },
     {
       datastore_id = ""
-      interface = "sata2"
+      interface = null
       path_in_datastore  = "/dev/sdb"
       file_format = "raw"
     },
