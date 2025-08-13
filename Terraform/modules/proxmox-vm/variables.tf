@@ -106,22 +106,16 @@ variable "datastore_id" {
   default     = "local-zfs"
 }
 
-variable "disk_file_id" {
-  description = "File ID for disk"
-  type        = string
-  default     = null
-}
-
-variable "disk_interface" {
-  description = "Disk interface type"
-  type        = string
-  default     = "scsi0"
-}
-
-variable "disk_size" {
-  description = "Disk size"
-  type        = string
-  default     = null
+variable "disks" {
+  description = "List of disk configurations"
+  type = list(object({
+    file_id           = optional(string)
+    interface         = optional(string, "scsi0")
+    size              = optional(string)
+    path_in_datastore = optional(string)
+    file_format       = optional(string, "vmdk")
+  }))
+  default = []
 }
 
 variable "usb" {

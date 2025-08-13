@@ -26,6 +26,16 @@ module "unraid_virtual_machine" {
   memory_floating = 8192
   boot_order = ["usb0"]
   usb = proxmox_virtual_environment_hardware_mapping_usb.unraid.name
+  disks = [
+    {
+      path_in_datastore  = "/dev/sda"
+      file_format = "raw"
+    },
+    {
+      path_in_datastore  = "/dev/sdb"
+      file_format = "raw"
+    },
+  ]
   vm_tags     = ["Terraform", "Uraid"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 9000
@@ -42,11 +52,15 @@ module "desktop_virtual_machine" {
   cpu_cores = 8
   memory_dedicated = 32768
   memory_floating = 32768
-  disk_size = 60
+  disks = [
+    {
+      file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+      size         = 60
+    },
+  ]
   vm_tags     = ["Terraform", "Ubuntu", "Desktop"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 8999
-  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.desktop_user_data.id
   ip_address = "192.168.100.200/24"
@@ -62,11 +76,15 @@ module "kubernetes_production_virtual_machine" {
   cpu_cores = 2
   memory_dedicated = 8192
   memory_floating = 8192
-  disk_size = 30
+  disks = [
+    {
+      file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+      size         = 30
+    },
+  ]
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-prod-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 200 + count.index
-  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr200"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.200.${110 + count.index}/24"
@@ -82,11 +100,15 @@ module "kubernetes_test_virtual_machine" {
   cpu_cores = 2
   memory_dedicated = 8192
   memory_floating = 8192
-  disk_size = 30
+  disks = [
+    {
+      file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
+      size         = 30
+    },
+  ]
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-test-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 210 + count.index
-  disk_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
   network_bridge = "vmbr200"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.200.${120 + count.index}/24"

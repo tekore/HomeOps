@@ -29,21 +29,22 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
   }
 
   dynamic "disk" {
-    for_each = var.disk_size != null ? [var.disk_size] : []
+    for_each = var.disks
     content {
-      datastore_id = var.datastore_id
-      file_id      = var.disk_file_id != null ? var.disk_file_id : null
-      interface    = var.disk_interface
-      size         = var.disk_size != null ? var.disk_size : null
+      datastore_id      = var.datastore_id
+      file_id           = disk.value.file_id != null ? disk.value.file_id : null
+      interface         = disk.value.interface != null ? disk.value.interface : null
+      size              = disk.value.size != null ? disk.value.size : null
+      path_in_datastore = disk.value.path_in_datastore != null ? disk.value.path_in_datastore : null
+      file_format       = disk.value.file_format != null ? disk.value.file_format : null
     }
   }
-
-  dynamic "usb" {
-    for_each = var.usb != null ? [var.usb] : []
-    content {
-      mapping = var.usb
+    dynamic "usb" {
+      for_each = var.usb != null ? [var.usb] : []
+      content {
+        mapping = var.usb
+      }
     }
-  }
 
   dynamic "hostpci" {
     for_each = var.host_pci_device != null ? [var.host_pci_device] : []
