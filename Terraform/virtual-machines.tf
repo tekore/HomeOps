@@ -29,13 +29,13 @@ module "unraid_virtual_machine" {
   disks = [
     {
       datastore_id = ""
-      interface = null
+      interface = "scsi0"
       path_in_datastore  = "/dev/sda"
       file_format = "raw"
     },
     {
       datastore_id = ""
-      interface = null
+      interface = "scsi1"
       path_in_datastore  = "/dev/sdb"
       file_format = "raw"
     },
