@@ -39,6 +39,7 @@ resource "proxmox_virtual_environment_vm" "virtual_machine" {
       file_format       = disk.value.file_format != null ? disk.value.file_format : null
     }
   }
+
     dynamic "usb" {
       for_each = var.usb != null ? [var.usb] : []
       content {

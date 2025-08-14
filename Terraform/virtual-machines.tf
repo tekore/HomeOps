@@ -29,14 +29,14 @@ module "unraid_virtual_machine" {
   disks = [
     {
       datastore_id = ""
-      interface = ""
+      interface = "scsi1"
       path_in_datastore  = "/dev/disk/by-id/ata-KINGSTON_SA400S37480G_50026B7383A5D5C6"
       file_format = "raw"
       #size = 447
     },
     {
       datastore_id = ""
-      interface = ""
+      interface = "scsi2"
       path_in_datastore  = "/dev/disk/by-id/ata-KINGSTON_SA400S37480G_50026B7383A5D94E"
       file_format = "raw"
       #size = 447
