@@ -29,13 +29,17 @@ module "unraid_virtual_machine" {
   disks = [
     {
       datastore_id = ""
+      interface = ""
       path_in_datastore  = "/dev/disk/by-id/ata-KINGSTON_SA400S37480G_50026B7383A5D5C6"
       file_format = "raw"
+      #size = 447
     },
     {
       datastore_id = ""
+      interface = ""
       path_in_datastore  = "/dev/disk/by-id/ata-KINGSTON_SA400S37480G_50026B7383A5D94E"
       file_format = "raw"
+      #size = 447
     },
   ]
   vm_tags     = ["Terraform", "Uraid"]
@@ -56,6 +60,7 @@ module "desktop_virtual_machine" {
   memory_floating = 32768
   disks = [
     {
+      interface    = "scsi0"
       file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
       size         = 60
     },
@@ -80,6 +85,7 @@ module "kubernetes_production_virtual_machine" {
   memory_floating = 8192
   disks = [
     {
+      interface    = "scsi0"
       file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
       size         = 30
     },
@@ -104,6 +110,7 @@ module "kubernetes_test_virtual_machine" {
   memory_floating = 8192
   disks = [
     {
+      interface    = "scsi0"
       file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
       size         = 30
     },
