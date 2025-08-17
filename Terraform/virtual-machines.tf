@@ -70,9 +70,8 @@ module "desktop_virtual_machine" {
   vm_id       = 8999
   network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.desktop_user_data.id
-  ip_address = "192.168.100.200/24"
+  ip_address = "192.168.100.101/24"
   gateway = var.ipaddresses.gateway
-  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr200 ]
 }
 
 // Kubernetes Production
@@ -93,11 +92,10 @@ module "kubernetes_production_virtual_machine" {
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-prod-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 200 + count.index
-  network_bridge = "vmbr200"
+  network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "192.168.200.${110 + count.index}/24"
-  gateway = "192.168.200.1"
-  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr200 ]
+  ip_address = "192.168.100.${110 + count.index}/24"
+  gateway = var.ipaddresses.gateway
 }
 
 // Kubernetes Test
@@ -118,9 +116,8 @@ module "kubernetes_test_virtual_machine" {
   vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-test-${count.index + 1}"]
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 210 + count.index
-  network_bridge = "vmbr200"
+  network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "192.168.200.${120 + count.index}/24"
-  gateway = "192.168.200.1"
-  depends_on = [ proxmox_virtual_environment_network_linux_bridge.vmbr200 ]
+  ip_address = "192.168.100.${120 + count.index}/24"
+  gateway = var.ipaddresses.gateway
 }
