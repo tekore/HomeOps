@@ -5,7 +5,7 @@
   become_user: root
   hosts: localhost
   vars:
-    hostname: "kubernetes-worker"
+    hostname_base: "kubernetes-worker"
   tasks:
     - name: Set a hostname with IP suffix
       ansible.builtin.hostname:
