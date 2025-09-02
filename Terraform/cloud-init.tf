@@ -49,6 +49,7 @@ resource "proxmox_virtual_environment_file" "desktop_user_data" {
 }
 
 resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
+  count = 4
   content_type = "snippets"
   datastore_id = "local"
   node_name    = data.proxmox_virtual_environment_node.node.node_name
@@ -56,7 +57,7 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: Kubernetes-Node
+    hostname: Kubernetes-Node-${count.index + 1}
     timezone: ${var.cloudinit.timezone}
     users:
       - default
@@ -76,6 +77,15 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - ansible
       - openssh-server
       - vim
+    ssh_pwauth: true
+    write_files:
+      - path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+        content: |
+          PasswordAuthentication yes
+          PubkeyAuthentication yes
+          ChallengeResponseAuthentication no
+          UsePAM yes
+        permissions: '0644'
     runcmd:
       - systemctl enable --now ssh
       - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-kubernetes-prerequisites.yml"
@@ -83,6 +93,6 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
       - touch /etc/cloud/cloud-init.disabled
     EOF
 
-    file_name = "kubernetes-user-data.yaml"
+    file_name = "kubernetes-${count.index + 1}-user-data.yaml"
   }
 }
