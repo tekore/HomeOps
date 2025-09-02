@@ -85,9 +85,6 @@ resource "proxmox_virtual_environment_file" "kubernetes_user_data" {
           ChallengeResponseAuthentication no
           UsePAM yes
         permissions: '0644'
-      - path: /etc/cloud-init.txt
-        content: |
-          Cloud Init Complete
     runcmd:
       - systemctl enable --now ssh
       - ansible-pull -U "https://github.com/tekore/HomeOps.git" -i localhost --purge "Ansible/configure-kubernetes-prerequisites.yml"
