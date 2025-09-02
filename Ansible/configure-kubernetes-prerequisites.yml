@@ -51,6 +51,14 @@
       loop:
         - "overlay"
         - "br_netfilter"
+    
+    - name: Make the kernel modules persistent
+      ansible.builtin.copy:
+        content: |
+          overlay
+          br_netfilter
+        dest: /etc/modules-load.d/kubernetes.conf
+        mode: '0644'
 
     - name: Ensure containerd is installed.
       apt:
