@@ -93,7 +93,7 @@ module "kubernetes_production_virtual_machine" {
   node_name   = data.proxmox_virtual_environment_node.node.node_name
   vm_id       = 200 + count.index
   network_bridge = "vmbr0"
-  user_data = proxmox_virtual_environment_file.kubernetes_user_data[count.index].id
+  user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.100.${110 + count.index}/24"
   gateway = var.ipaddresses.gateway
 }

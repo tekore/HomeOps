@@ -4,7 +4,13 @@
   become: true
   become_user: root
   hosts: localhost
+  vars:
+    hostname: "kubernetes-worker"
   tasks:
+    - name: Set a hostname with IP suffix
+      ansible.builtin.hostname:
+        name: "{{ hostname_base }}-{{ ansible_default_ipv4.address.split('.')[3] }}"
+
     - name: Install UFW
       apt:
         name: ufw
