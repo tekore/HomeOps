@@ -22,7 +22,7 @@ flowchart TD
     SelfRegister --> Pipeline["⚙️ Pipeline Triggered"]
     Pipeline --> Terraform["🏗️ Terraform Build"]
     Terraform --> AnsiblePull["🔄 All VMs Ansible Pull"]
-
+    AnsiblePull --> Kubectl["☸️ Apply the Kustomize YAML"]
     %% Styling
     style Boot fill:#d5e8d4,stroke:#82b366,color:#333
     style Proxmox fill:#dae8fc,stroke:#6c8ebf,color:#333
@@ -34,6 +34,7 @@ flowchart TD
     style Pipeline fill:#dae8fc,stroke:#6c8ebf,color:#333
     style Terraform fill:#dae8fc,stroke:#6c8ebf,color:#333
     style AnsiblePull fill:#ffe6cc,stroke:#d79b00,color:#333
+    style Kubectl fill:#ffe6cc,stroke:#82b366,color:#333
 ```
 
 ## Maintainers
