@@ -76,10 +76,10 @@ module "desktop_virtual_machine" {
 
 // Kubernetes Production
 module "kubernetes_production_virtual_machine" {
-  count = 4
+  count = 7
   source = "./modules/proxmox-vm"
   vm_name     = "Kubernetes-prod-${count.index + 1}"
-  cpu_cores = 2
+  cpu_cores = 4
   memory_dedicated = 8192
   memory_floating = 8192
   disks = [
@@ -95,29 +95,5 @@ module "kubernetes_production_virtual_machine" {
   network_bridge = "vmbr0"
   user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
   ip_address = "192.168.100.${110 + count.index}/24"
-  gateway = var.ipaddresses.gateway
-}
-
-// Kubernetes Test
-module "kubernetes_test_virtual_machine" {
-  count = 3
-  source = "./modules/proxmox-vm"  
-  vm_name     = "Kubernetes-test-${count.index + 1}"
-  cpu_cores = 2
-  memory_dedicated = 8192
-  memory_floating = 8192
-  disks = [
-    {
-      interface    = "scsi0"
-      file_id      = proxmox_virtual_environment_download_file.latest_ubuntu_24_noble_qcow2_img.id
-      size         = 30
-    },
-  ]
-  vm_tags     = ["Terraform", "Ubuntu", "Kubernetes-test-${count.index + 1}"]
-  node_name   = data.proxmox_virtual_environment_node.node.node_name
-  vm_id       = 210 + count.index
-  network_bridge = "vmbr0"
-  user_data = proxmox_virtual_environment_file.kubernetes_user_data.id
-  ip_address = "192.168.100.${120 + count.index}/24"
   gateway = var.ipaddresses.gateway
 }
